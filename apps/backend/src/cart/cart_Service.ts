@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CartItem } from './entities/cart_Item.entity';
+import { CartItem } from './entities/cart_Item_Entity';
 import { Product } from '../products/entities/product_Entity';
 import { AddToCartDto } from './dto/add_ToCart.dto';
 

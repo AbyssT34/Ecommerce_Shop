@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Product } from './entities/product_Entity';
 import { Category } from './entities/category_Entity';
 import { Ingredient } from './entities/ingredient_Entity';
-import { ProductIngredient } from './entities/product_Ingredient.entity';
+import { ProductIngredient } from './entities/product_Ingredient_Entity';
 import { CreateProductDto } from './dto/create_Product.dto';
 import { UpdateProductDto } from './dto/update_Product.dto';
 

@@ -9,7 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Category } from './category_Entity';
-import { ProductIngredient } from './product_Ingredient.entity';
+import { ProductIngredient } from './product_Ingredient_Entity';
 
 @Entity('products')
 export class Product {
@@ -19,7 +19,7 @@ export class Product {
   @Column()
   name: string;
 
-  @Column({ unique: true })
+  @Column({ nullable: true })
   sku: string;
 
   @Column({ type: 'text', nullable: true })

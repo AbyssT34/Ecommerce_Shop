@@ -5,9 +5,9 @@ export class CreateProductDto {
   @IsString()
   name: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  sku: string;
+  sku?: string;
 
   @IsOptional()
   @IsString()

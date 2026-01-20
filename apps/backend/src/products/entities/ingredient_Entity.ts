@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { ProductIngredient } from './product_Ingredient.entity';
+import { ProductIngredient } from './product_Ingredient_Entity';
 
 @Entity('ingredients')
 export class Ingredient {

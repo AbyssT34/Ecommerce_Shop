@@ -7,7 +7,7 @@ import { CategoriesController } from './categories_Controller';
 import { Product } from './entities/product_Entity';
 import { Category } from './entities/category_Entity';
 import { Ingredient } from './entities/ingredient_Entity';
-import { ProductIngredient } from './entities/product_Ingredient.entity';
+import { ProductIngredient } from './entities/product_Ingredient_Entity';
 
 @Module({
   imports: [
