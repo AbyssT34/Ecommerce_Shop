@@ -38,4 +38,5 @@ export declare class RecipesService {
         createdAt: Date;
         updatedAt: Date;
     }>;
+    suggestRecipesFromCart(productIds: number[]): Promise<any[]>;
 }

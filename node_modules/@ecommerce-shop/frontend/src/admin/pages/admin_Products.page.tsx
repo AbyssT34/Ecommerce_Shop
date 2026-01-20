@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { GlassCard, GlassButton, GlassInput, Badge } from '@shared/components';
 import { productsApi, categoriesApi } from '@shared/api';
-import { Product } from '@shared/types';
+import type { Product } from '@shared/types/product_Types';
 import { formatCurrency } from '@shared/utils';
 
 const productSchema = z.object({

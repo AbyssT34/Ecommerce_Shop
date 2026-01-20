@@ -33,6 +33,11 @@ export class RecipesController {
     return this.recipesService.getAvailableRecipes();
   }
 
+  @Post('suggest-from-cart')
+  suggestRecipesFromCart(@Body() body: { productIds: number[] }) {
+    return this.recipesService.suggestRecipesFromCart(body.productIds);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.recipesService.findOne(+id);

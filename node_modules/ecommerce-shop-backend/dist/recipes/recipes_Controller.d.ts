@@ -6,6 +6,9 @@ export declare class RecipesController {
     create(createRecipeDto: CreateRecipeDto): Promise<import("./entities/recipe_Entity").Recipe>;
     findAll(): Promise<import("./entities/recipe_Entity").Recipe[]>;
     getAvailableRecipes(): Promise<any[]>;
+    suggestRecipesFromCart(body: {
+        productIds: number[];
+    }): Promise<any[]>;
     findOne(id: string): Promise<import("./entities/recipe_Entity").Recipe>;
     getRecipeWithProducts(id: string): Promise<{
         productSuggestions: any[];

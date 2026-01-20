@@ -1,5 +1,5 @@
 import axiosInstance from './axios_Config';
-import type { Recipe, AvailableRecipe } from '../types';
+import type { Recipe, AvailableRecipe, RecipeWithAvailability } from '../types';
 
 export const recipesApi = {
   /**
@@ -13,9 +13,18 @@ export const recipesApi = {
   /**
    * Get available recipes (AI-powered)
    */
-  getAvailable: async (): Promise<AvailableRecipe[]> => {
-    const response = await axiosInstance.get<AvailableRecipe[]>('/recipes/available');
-    return response.data;
+  getAvailable: async (): Promise<RecipeWithAvailability[]> => {
+    const response = await axiosInstance.get<any[]>('/recipes/available');
+    return response.data.map((recipe: any) => ({
+      ...recipe,
+      isAvailable: true,
+      estimatedCost: recipe.productSuggestions?.reduce((sum: number, p: any) => sum + (p.product?.price || 0), 0),
+      productSuggestions: recipe.productSuggestions?.map((s: any) => ({
+        ...s,
+        suggestedProduct: s.product,
+        isAvailable: s.product?.stockQuantity > 0,
+      })),
+    }));
   },
 
   /**
@@ -24,6 +33,24 @@ export const recipesApi = {
   getById: async (id: number): Promise<Recipe> => {
     const response = await axiosInstance.get<Recipe>(`/recipes/${id}`);
     return response.data;
+  },
+
+  /**
+   * Check recipe availability and get product suggestions
+   */
+  checkAvailability: async (id: number): Promise<RecipeWithAvailability> => {
+    const response = await axiosInstance.get<any>(`/recipes/${id}/with-products`);
+    const recipe = response.data;
+    return {
+      ...recipe,
+      isAvailable: recipe.productSuggestions?.every((s: any) => s.product?.stockQuantity > 0),
+      estimatedCost: recipe.productSuggestions?.reduce((sum: number, p: any) => sum + (p.product?.price || 0), 0),
+      productSuggestions: recipe.productSuggestions?.map((s: any) => ({
+        ...s,
+        suggestedProduct: s.product,
+        isAvailable: s.product?.stockQuantity > 0,
+      })),
+    };
   },
 
   /**

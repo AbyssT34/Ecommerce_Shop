@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { GlassCard, GlassButton, GlassInput } from '@shared/components';
 import { productsApi, categoriesApi } from '@shared/api';
-import { Product, Category } from '@shared/types';
+import type { Product, Category } from '@shared/types/product_Types';
 import { formatCurrency } from '@shared/utils';
 import { useCartStore } from '@shared/store';
 

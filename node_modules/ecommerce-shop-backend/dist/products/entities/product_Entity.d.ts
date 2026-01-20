@@ -7,6 +7,7 @@ export declare class Product {
     description: string;
     price: number;
     stockQuantity: number;
+    unit: string;
     imageUrl: string;
     categoryId: number;
     category: Category;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { GlassCard, Badge, GlassButton } from '@shared/components';
 import { ordersApi } from '@shared/api';
-import { Order } from '@shared/types';
+import type { Order } from '@shared/types/order_Types';
 import { formatCurrency, formatDate } from '@shared/utils';
 
 export function AdminOrdersPage() {

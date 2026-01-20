@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { GlassCard, GlassButton, Badge } from '@shared/components';
 import { recipesApi } from '@shared/api';
-import { Recipe, RecipeWithAvailability } from '@shared/types';
+import type { Recipe, RecipeWithAvailability } from '@shared/types/recipe_Types';
 import { formatCurrency } from '@shared/utils';
 import { useCartStore } from '@shared/store';
 
@@ -69,9 +69,8 @@ export function RecipesPage() {
             {recipes.map((recipe: RecipeWithAvailability) => (
               <GlassCard
                 key={recipe.id}
-                className={`p-6 cursor-pointer transition-all ${
-                  selectedRecipe?.id === recipe.id ? 'ring-2 ring-accent-teal' : ''
-                }`}
+                className={`p-6 cursor-pointer transition-all ${selectedRecipe?.id === recipe.id ? 'ring-2 ring-accent-teal' : ''
+                  }`}
                 hover
                 onClick={() => handleSelectRecipe(recipe)}
               >

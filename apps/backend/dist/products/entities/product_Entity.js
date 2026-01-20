@@ -41,6 +41,10 @@ __decorate([
     __metadata("design:type", Number)
 ], Product.prototype, "stockQuantity", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Product.prototype, "unit", void 0);
+__decorate([
     (0, typeorm_1.Column)({ name: 'image_url', nullable: true }),
     __metadata("design:type", String)
 ], Product.prototype, "imageUrl", void 0);

@@ -31,6 +31,9 @@ let RecipesController = class RecipesController {
     getAvailableRecipes() {
         return this.recipesService.getAvailableRecipes();
     }
+    suggestRecipesFromCart(body) {
+        return this.recipesService.suggestRecipesFromCart(body.productIds);
+    }
     findOne(id) {
         return this.recipesService.findOne(+id);
     }
@@ -65,6 +68,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], RecipesController.prototype, "getAvailableRecipes", null);
+__decorate([
+    (0, common_1.Post)('suggest-from-cart'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], RecipesController.prototype, "suggestRecipesFromCart", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),

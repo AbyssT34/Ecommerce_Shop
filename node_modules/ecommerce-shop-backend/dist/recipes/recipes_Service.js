@@ -61,6 +61,9 @@ let RecipesService = class RecipesService {
         });
         const availableRecipes = [];
         for (const recipe of recipes) {
+            if (!recipe.ingredients || recipe.ingredients.length === 0) {
+                continue;
+            }
             const ingredientIds = recipe.ingredients.map((ing) => ing.ingredient_id);
             if (ingredientIds.length === 0) {
                 continue;
@@ -130,6 +133,65 @@ let RecipesService = class RecipesService {
             ...recipe,
             productSuggestions,
         };
+    }
+    async suggestRecipesFromCart(productIds) {
+        if (!productIds || productIds.length === 0) {
+            return [];
+        }
+        const products = await this.productsRepository.find({
+            where: productIds.map(id => ({ id })),
+            relations: ['productIngredients', 'productIngredients.ingredient'],
+        });
+        const cartIngredientIds = new Set();
+        products.forEach(product => {
+            product.productIngredients?.forEach(pi => {
+                if (pi.ingredientId) {
+                    cartIngredientIds.add(pi.ingredientId);
+                }
+            });
+        });
+        if (cartIngredientIds.size === 0) {
+            return [];
+        }
+        const recipes = await this.recipesRepository.find({
+            where: { active: true },
+        });
+        const suggestions = [];
+        for (const recipe of recipes) {
+            if (!recipe.ingredients || recipe.ingredients.length === 0) {
+                continue;
+            }
+            const recipeIngredientIds = recipe.ingredients.map(ing => ing.ingredient_id);
+            const matchedIngredients = recipeIngredientIds.filter(id => cartIngredientIds.has(id));
+            const matchPercentage = (matchedIngredients.length / recipeIngredientIds.length) * 100;
+            if (matchPercentage >= 30) {
+                const productSuggestions = await this.getProductSuggestionsForRecipe(recipeIngredientIds);
+                const inCart = [];
+                const needed = [];
+                productSuggestions.forEach(suggestion => {
+                    if (cartIngredientIds.has(suggestion.ingredientId)) {
+                        inCart.push(suggestion);
+                    }
+                    else {
+                        needed.push(suggestion);
+                    }
+                });
+                suggestions.push({
+                    ...recipe,
+                    matchPercentage: Math.round(matchPercentage),
+                    ingredientsInCart: inCart.length,
+                    ingredientsNeeded: needed.length,
+                    totalIngredients: recipeIngredientIds.length,
+                    productSuggestions: {
+                        inCart,
+                        needed,
+                    },
+                    estimatedAdditionalCost: needed.reduce((sum, p) => sum + (p.product?.price || 0), 0),
+                });
+            }
+        }
+        suggestions.sort((a, b) => b.matchPercentage - a.matchPercentage);
+        return suggestions;
     }
 };
 exports.RecipesService = RecipesService;

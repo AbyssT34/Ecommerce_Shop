@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { GlassCard } from '@shared/components';
 import { productsApi, ordersApi } from '@shared/api';
-import { Order, Product } from '@shared/types';
+import type { Order } from '@shared/types/order_Types';
+import type { Product } from '@shared/types/product_Types';
 import { formatCurrency } from '@shared/utils';
 
 export function AdminDashboardPage() {

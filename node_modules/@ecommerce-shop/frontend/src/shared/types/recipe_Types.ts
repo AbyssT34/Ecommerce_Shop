@@ -30,7 +30,16 @@ export interface AvailableRecipe extends Recipe {
 export interface ProductSuggestion {
   ingredientId: number;
   ingredientName: string;
+  quantity?: string;
   product: {
+    id: number;
+    name: string;
+    sku: string;
+    price: number;
+    stockQuantity: number;
+    imageUrl?: string;
+  };
+  suggestedProduct?: {
     id: number;
     name: string;
     sku: string;
@@ -40,4 +49,12 @@ export interface ProductSuggestion {
   };
   isPrimary: boolean;
   priority: number;
+  isAvailable?: boolean;
+}
+
+export interface RecipeWithAvailability extends Recipe {
+  productSuggestions?: ProductSuggestion[];
+  totalAvailability?: number;
+  isAvailable?: boolean;
+  estimatedCost?: number;
 }

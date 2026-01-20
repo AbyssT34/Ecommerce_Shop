@@ -31,6 +31,9 @@ export class Product {
   @Column({ name: 'stock_quantity', default: 0 })
   stockQuantity: number;
 
+  @Column({ nullable: true })
+  unit: string;
+
   @Column({ name: 'image_url', nullable: true })
   imageUrl: string;
 
