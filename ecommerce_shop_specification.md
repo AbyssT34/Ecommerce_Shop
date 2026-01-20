@@ -1,382 +1,12 @@
-# 🛒 ECOMMERCE_SHOP
+# Ecommerce_Shop - Đặc Tả Hệ Thống Hoàn Chỉnh
 
-> **Nền tảng E-commerce thông minh với AI gợi ý món ăn**
->
-> **Version**: 2.0.0
-> **Tech Stack**: React 18 + Vite + TypeScript | NestJS + MySQL
-> **Design**: SaaS Premium Dark Mode, Glassmorphism, AI-Driven UX
+> **Version**: 1.0  
+> **Tech Stack**: React + Vite + TypeScript (Frontend) | Node.js/NestJS + MySQL (Backend)  
+> **Design Philosophy**: SaaS Premium, Dark Mode, Glassmorphism, AI-Driven UX
 
 ---
 
-## ✨ TÍNH NĂNG NỔI BẬT
-
-### 🤖 AI Recipe Suggestion
-- **Gợi ý món ăn thông minh** dựa trên nguyên liệu còn hàng
-- Tự động tính chi phí và thêm nguyên liệu vào giỏ hàng
-- Lọc theo mood tags: daily, comfort, gym, healthy, quick...
-
-### 🛍️ Storefront (User)
-- Danh sách sản phẩm với filter & search
-- Giỏ hàng realtime với Zustand
-- Checkout flow với validation
-- Order tracking
-
-### 👨‍💼 Admin Dashboard
-- Quản lý sản phẩm với **Ingredient Mapping**
-- Approve/Reject đơn hàng với stock management
-- Low stock alerts
-- Analytics & Reports
-
----
-
-## 🚀 QUICK START
-
-### Prerequisites
-```bash
-Node.js >= 18.x
-MySQL >= 8.0
-npm >= 9.x
-```
-
-### Installation
-
-**1️⃣ Clone & Install**
-```bash
-git clone <repository-url>
-cd Ecommerce_Shop
-
-# Install dependencies cho cả Frontend và Backend
-npm install
-```
-
-**2️⃣ Setup Database**
-```bash
-# Tạo database trong MySQL
-mysql -u root -p
-
-# Trong MySQL shell:
-CREATE DATABASE ecommerce_shop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-EXIT;
-
-# Import schema
-mysql -u root -p ecommerce_shop < database_setup.sql
-```
-
-**3️⃣ Configure Environment**
-```bash
-# Backend
-cd apps/backend
-cp .env.example .env
-# Edit .env với thông tin database của bạn
-
-# Frontend
-cd apps/frontend
-cp .env.example .env
-# Edit VITE_API_URL nếu cần
-```
-
-**4️⃣ Run Development**
-```bash
-# Từ thư mục root, chạy cả Frontend và Backend
-npm run dev
-
-# Hoặc chạy riêng lẻ:
-npm run dev:backend   # Backend: http://localhost:3000
-npm run dev:frontend  # Frontend: http://localhost:5173
-```
-
----
-
-## 📁 CẤU TRÚC DỰ ÁN
-
-```
-Ecommerce_Shop/
-├── apps/
-│   ├── backend/          # NestJS API Server
-│   │   ├── src/
-│   │   │   ├── auth/           # JWT Authentication
-│   │   │   ├── users/          # User management
-│   │   │   ├── products/       # Product CRUD
-│   │   │   ├── recipes/        # AI Recipe Logic ⭐
-│   │   │   ├── cart/           # Shopping cart
-│   │   │   ├── orders/         # Order management
-│   │   │   └── admin/          # Admin features
-│   │   └── ...
-│   │
-│   └── frontend/         # React + Vite SPA
-│       ├── src/
-│       │   ├── customer/       # Storefront
-│       │   │   ├── pages/
-│       │   │   └── components/
-│       │   ├── admin/          # Admin Dashboard
-│       │   │   ├── pages/
-│       │   │   └── components/
-│       │   └── shared/         # Shared utilities
-│       │       ├── api/
-│       │       ├── store/      # Zustand stores
-│       │       └── types/
-│       └── ...
-│
-├── docs/
-│   ├── ARCHITECTURE.md         # Chi tiết kiến trúc hệ thống
-│   ├── COMMIT_HISTORY.md       # Lịch sử commit theo phase
-│   └── DEPLOYMENT.md           # Hướng dẫn deploy production
-│
-├── database_setup.sql          # SQL schema + seed data
-├── recipes.json                # 50 công thức nấu ăn
-└── README.md                   # File này
-```
-
----
-
-## 📊 TRẠNG THÁI DỰ ÁN
-
-| Phase | Status | Description |
-|-------|--------|-------------|
-| **Phase 0** | ✅ Hoàn thành | Project initialization & Documentation |
-| **Phase 1** | ✅ Hoàn thành | Backend foundation (NestJS + TypeORM + All APIs) |
-| **Phase 2** | ⏳ Đang triển khai | Frontend foundation (React + Vite + Tailwind) |
-| **Phase 3** | 📋 Chưa bắt đầu | Storefront features |
-| **Phase 4** | 📋 Chưa bắt đầu | Admin Dashboard |
-| **Phase 5** | 📋 Chưa bắt đầu | AI Recipe Integration |
-| **Phase 6** | 📋 Chưa bắt đầu | Testing & Optimization |
-| **Phase 7** | 📋 Chưa bắt đầu | Deployment & Production |
-
-📖 **Chi tiết lộ trình**: Xem [docs/COMMIT_HISTORY.md](docs/COMMIT_HISTORY.md)
-
----
-
-## 🎨 DESIGN SYSTEM
-
-### Color Palette (Dark SaaS)
-- **Background**: `#0F172A` (Slate 900) - `#1E293B` (Slate 800)
-- **Primary**: `#3B82F6` (Blue 500) - CTA Buttons
-- **Secondary**: `#F97316` (Orange 500) - Warm accents
-- **Accent**: `#14B8A6` (Teal) → `#06B6D4` (Cyan) gradient
-- **Text**: `#F8FAFC` (Heading) - `#CBD5E1` (Body)
-
-### Components
-- **Glassmorphism Cards** với backdrop blur
-- **Gradient Buttons** với hover animations
-- **Glass Input Fields** với focus states
-- **Badge Pills** cho status và categories
-
-🎨 **Chi tiết Design System**: Xem [ecommerce_shop_specification.md](ecommerce_shop_specification.md#4-design-system)
-
----
-
-## 📚 TÀI LIỆU CHUYÊN SÂU
-
-### 📖 Tài liệu kỹ thuật
-1. **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Kiến trúc hệ thống chi tiết
-   - Cấu trúc Monorepo
-   - Backend folder structure (NestJS)
-   - Frontend folder structure (React + Vite)
-   - State Management (Zustand + React Query)
-   - API Communication Layer
-
-2. **[COMMIT_HISTORY.md](docs/COMMIT_HISTORY.md)** - Lộ trình triển khai
-   - 73 commits được lên kế hoạch chi tiết
-   - Chia thành 7 phases
-   - Conventional Commits format
-   - Timeline ước tính: 6 tuần
-
-3. **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Production deployment
-   - Server requirements
-   - nginx configuration
-   - Docker deployment
-   - SSL/TLS setup
-   - Monitoring & Logging
-
-4. **[ecommerce_shop_specification.md](ecommerce_shop_specification.md)** - Đặc tả đầy đủ
-   - Database Schema & ERD
-   - API Specification
-   - AI Recipe Algorithm
-   - UX Flow diagrams
-   - Security & Performance
-
----
-
-## 🔐 AUTHENTICATION
-
-### Default Accounts
-
-**Admin Account:**
-```
-Email: admin@shop.com
-Password: Admin@123
-```
-
-**Test User Account:**
-```
-Email: user@example.com
-Password: Admin@123
-```
-
-⚠️ **Lưu ý**: Đổi mật khẩu ngay khi deploy lên production!
-
----
-
-## 🧪 TESTING
-
-```bash
-# Backend unit tests
-cd apps/backend
-npm run test
-
-# Backend E2E tests
-npm run test:e2e
-
-# Frontend component tests
-cd apps/frontend
-npm run test
-
-# Coverage report
-npm run test:cov
-```
-
----
-
-## 📦 BUILD PRODUCTION
-
-```bash
-# Build Backend
-cd apps/backend
-npm run build
-# Output: dist/
-
-# Build Frontend
-cd apps/frontend
-npm run build
-# Output: dist/
-```
-
-🚀 **Chi tiết deployment**: Xem [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
-
----
-
-## 🛠️ CÔNG NGHỆ SỬ DỤNG
-
-### Backend
-- **Framework**: NestJS 10.x
-- **Language**: TypeScript 5.x
-- **Database**: MySQL 8.0
-- **ORM**: TypeORM
-- **Authentication**: JWT + Passport
-- **Validation**: class-validator + class-transformer
-
-### Frontend
-- **Framework**: React 18
-- **Build Tool**: Vite 5.x
-- **Language**: TypeScript 5.x
-- **Styling**: Tailwind CSS 3.x
-- **State Management**: Zustand + React Query
-- **Router**: React Router v6
-- **HTTP Client**: Axios
-
-### DevOps
-- **Process Manager**: PM2
-- **Web Server**: nginx
-- **Containerization**: Docker + Docker Compose
-- **SSL**: Let's Encrypt (Certbot)
-
----
-
-## 📝 GIT WORKFLOW
-
-### Branch Strategy
-```bash
-main            # Production-ready code
-├── develop     # Development branch
-├── feat/*      # Feature branches
-├── fix/*       # Bug fix branches
-└── hotfix/*    # Emergency fixes
-```
-
-### Commit Convention
-Sử dụng [Conventional Commits](https://www.conventionalcommits.org/):
-
-```bash
-feat(backend): add user authentication module
-fix(frontend): resolve cart total calculation bug
-docs: update API documentation
-style(frontend): format code with prettier
-refactor(backend): optimize database queries
-test(backend): add unit tests for auth service
-chore: update dependencies
-```
-
----
-
-## 🤝 CONTRIBUTING
-
-1. Fork repository
-2. Tạo feature branch (`git checkout -b feat/amazing-feature`)
-3. Commit changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to branch (`git push origin feat/amazing-feature`)
-5. Open Pull Request
-
-📖 **Chi tiết**: Xem [CONTRIBUTING.md](CONTRIBUTING.md) (nếu có)
-
----
-
-## 📄 LICENSE
-
-This project is proprietary and confidential.
-
----
-
-## 📞 LIÊN HỆ & HỖ TRỢ
-
-**Development Team**: dev@ecommerce-shop.com
-**Technical Support**: support@ecommerce-shop.com
-
-**Issue Tracker**: [GitHub Issues](https://github.com/yourusername/ecommerce-shop/issues)
-
----
-
-## 🎯 ROADMAP
-
-### ✅ Version 1.0 (Current)
-- [x] Core E-commerce features
-- [x] AI Recipe Suggestion
-- [x] Admin Dashboard
-- [x] Authentication & Authorization
-
-### 🚧 Version 1.1 (Planned)
-- [ ] Payment Gateway integration (VNPay, MoMo)
-- [ ] Email notifications
-- [ ] Product reviews & ratings
-- [ ] Wishlist feature
-
-### 📋 Version 2.0 (Future)
-- [ ] Mobile app (React Native)
-- [ ] Advanced AI recommendations
-- [ ] Multi-vendor support
-- [ ] Real-time chat support
-
----
-
-## ⭐ ACKNOWLEDGMENTS
-
-- Design inspiration: Modern SaaS platforms
-- UI Library: Tailwind CSS
-- Icons: Heroicons
-- Fonts: Inter (Google Fonts)
-
----
-
-<div align="center">
-
-**Made with ❤️ by Senior Engineering Team**
-
-[⬆ Back to Top](#-ecommerce_shop)
-
-</div>
-
----
-
-## 📋 Mục Lục (Original Specification)
+## 📋 Mục Lục
 
 1. [Tầm Nhìn Sản Phẩm](#1-tầm-nhìn-sản-phẩm)
 2. [Hành Trình Người Dùng (UX Flow)](#2-hành-trình-người-dùng-ux-flow)
@@ -413,7 +43,26 @@ This project is proprietary and confidential.
 
 ### 2.1 User Journey - Storefront
 
-![User Journey - Storefront Flow](./docs/images/ux_flow_storefront.png)
+```mermaid
+flowchart TD
+    A[Landing Page] --> B{Khám Phá}
+    B -->|Xem Công Thức| C[AI Recipe Page]
+    B -->|Tìm Sản Phẩm| D[Product List]
+    
+    C --> E[Click: Nấu Món Này]
+    E --> F[Side-Drawer: Danh Sách Nguyên Liệu]
+    F --> G{User Chọn}
+    G -->|Bỏ tích nguyên liệu đã có| G
+    G -->|Click: Thêm vào Giỏ| H[Cart Page]
+    
+    D --> I[Product Detail]
+    I --> J[Add to Cart]
+    J --> H
+    
+    H --> K[Checkout]
+    K --> L[Thanh Toán Thành Công]
+    L --> M[Order Confirmation]
+```
 
 **Chi tiết từng bước:**
 
@@ -427,7 +76,26 @@ This project is proprietary and confidential.
 
 ### 2.2 Admin Journey - Dashboard
 
-![Admin Journey - Dashboard Workflow](./docs/images/ux_flow_admin.png)
+```mermaid
+flowchart TD
+    A[Admin Login] --> B[Dashboard Overview]
+    B --> C{Chức Năng}
+    
+    C -->|Quản Lý Sản Phẩm| D[Product Management]
+    D --> E{Action}
+    E -->|Create New| F[Product Form + Ingredient Mapping]
+    E -->|Edit| F
+    E -->|View List| G[Product Table + Low Stock Alert]
+    
+    C -->|Quản Lý Đơn Hàng| H[Order Management]
+    H --> I{Order Status}
+    I -->|Pending| J[Approve/Reject Action]
+    I -->|Approved| K[Update Shipping Status]
+    I -->|Cancelled| L[Auto Stock Refund]
+    
+    C -->|Thống Kê| M[Analytics Dashboard]
+    M --> N[Top Recipes Report]
+```
 
 **Admin Workflow chính:**
 
@@ -447,7 +115,106 @@ This project is proprietary and confidential.
 
 ### 3.1 Entity Relationship Diagram
 
-![Database Schema - Entity Relationship Diagram](./docs/images/database_erd.png)
+```mermaid
+erDiagram
+    USERS ||--o{ ORDERS : places
+    USERS {
+        int id PK
+        string email UK
+        string password_hash
+        enum role "user, admin"
+        string full_name
+        string phone
+        text address
+        datetime created_at
+        datetime updated_at
+    }
+    
+    PRODUCTS ||--o{ ORDER_ITEMS : contains
+    PRODUCTS ||--o{ CART_ITEMS : in_cart
+    PRODUCTS ||--o{ PRODUCT_INGREDIENTS : maps_to
+    PRODUCTS {
+        int id PK
+        string name
+        string sku UK
+        text description
+        decimal price
+        int stock_quantity
+        string image_url
+        int category_id FK
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+    
+    CATEGORIES ||--o{ PRODUCTS : categorizes
+    CATEGORIES {
+        int id PK
+        string name
+        string slug UK
+        text description
+    }
+    
+    INGREDIENTS ||--o{ PRODUCT_INGREDIENTS : links
+    INGREDIENTS {
+        int id PK
+        string name UK
+        text description
+        datetime created_at
+    }
+    
+    PRODUCT_INGREDIENTS {
+        int id PK
+        int product_id FK
+        int ingredient_id FK
+        boolean is_primary
+        int priority
+    }
+    
+    RECIPES {
+        int id PK
+        string name
+        json mood_tags
+        int cooking_time_min
+        json ingredients_spec
+        json steps
+        string image_url
+        int view_count
+        datetime created_at
+    }
+    
+    ORDERS ||--o{ ORDER_ITEMS : includes
+    ORDERS {
+        int id PK
+        int user_id FK
+        string order_number UK
+        enum status "pending, approved, shipping, completed, cancelled"
+        decimal total_amount
+        text shipping_address
+        text notes
+        datetime approved_at
+        datetime created_at
+        datetime updated_at
+    }
+    
+    ORDER_ITEMS {
+        int id PK
+        int order_id FK
+        int product_id FK
+        int quantity
+        decimal unit_price
+        decimal subtotal
+    }
+    
+    CART_ITEMS {
+        int id PK
+        int user_id FK
+        int product_id FK
+        int quantity
+        datetime created_at
+        datetime updated_at
+    }
+```
 
 ### 3.2 Bảng Chi Tiết
 
@@ -503,7 +270,7 @@ This project is proprietary and confidential.
 | description | TEXT | NULL | Mô tả |
 | created_at | DATETIME | DEFAULT NOW() | Ngày tạo |
 
-**Data Source**: Trích xuất từ `recipes.json`. Ví dụ:
+**Data Source**: Trích xuất từ [recipes.json](file:///d:/Vibe_code/Ecommerce_Shop/recipes.json). Ví dụ:
 ```
 Thịt ba chỉ, Trứng gà, Nước mắm, Đường, Hành tím, Tiêu, Cá, Thịt gà, Gừng, Tỏi...
 ```
@@ -521,7 +288,7 @@ Thịt ba chỉ, Trứng gà, Nước mắm, Đường, Hành tím, Tiêu, Cá, 
 | view_count | INT | DEFAULT 0 | Số lượt xem |
 | created_at | DATETIME | DEFAULT NOW() | Ngày tạo |
 
-**Note**: Bảng này sync từ `recipes.json`, không cho phép Admin CRUD trực tiếp.
+**Note**: Bảng này sync từ [recipes.json](file:///d:/Vibe_code/Ecommerce_Shop/recipes.json), không cho phép Admin CRUD trực tiếp.
 
 #### **Table: orders**
 | Column | Type | Constraint | Description |
@@ -1408,7 +1175,7 @@ app.patch('/api/admin/orders/:id/approve', authGuard, adminGuard, approveOrder);
 ### 9.2 Security Checklist
 
 - ✅ **Password Hashing**: Bcrypt với salt rounds = 10
-- ✅ **JWT Secret**: Store trong `.env`, không commit
+- ✅ **JWT Secret**: Store trong [.env](file:///d:/Vibe_code/Ecommerce_Shop/.env), không commit
 - ✅ **SQL Injection Prevention**: Sử dụng ORM (Sequelize/Prisma)
 - ✅ **XSS Protection**: Sanitize input, escape output
 - ✅ **CORS**: Chỉ cho phép origin từ frontend domain

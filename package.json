@@ -1,0 +1,42 @@
+{
+  "name": "ecommerce-shop-monorepo",
+  "version": "2.0.0",
+  "description": "AI-Powered E-commerce Platform with Recipe Suggestions",
+  "private": true,
+  "workspaces": [
+    "apps/backend",
+    "apps/frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run start:dev --workspace=apps/backend",
+    "dev:frontend": "npm run dev --workspace=apps/frontend",
+    "build:all": "npm run build --workspaces",
+    "build:backend": "npm run build --workspace=apps/backend",
+    "build:frontend": "npm run build --workspace=apps/frontend",
+    "test": "npm run test --workspaces",
+    "clean": "rm -rf node_modules apps/*/node_modules apps/*/dist"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/ecommerce-shop"
+  },
+  "keywords": [
+    "ecommerce",
+    "ai",
+    "recipe-suggestion",
+    "nestjs",
+    "react",
+    "vite",
+    "typescript"
+  ],
+  "author": "Senior Engineering Team",
+  "license": "PROPRIETARY"
+}
