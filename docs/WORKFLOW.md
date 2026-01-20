@@ -21,7 +21,7 @@
 ### 1.1 Daily Workflow
 
 ```bash
-# 1. Start your day - Pull latest changes
+# 1. Start your day - Pull latest changes 
 git checkout develop
 git pull origin develop
 
