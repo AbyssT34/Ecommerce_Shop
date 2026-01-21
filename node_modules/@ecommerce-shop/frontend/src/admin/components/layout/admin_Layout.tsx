@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { AdminHeader } from './admin_Header';
 import { AdminSidebar } from './admin_Sidebar';
 

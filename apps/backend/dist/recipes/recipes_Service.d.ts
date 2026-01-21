@@ -19,16 +19,12 @@ export declare class RecipesService {
     private checkRecipeAvailability;
     private getProductSuggestionsForRecipe;
     getRecipeWithProducts(id: number): Promise<{
+        ingredients: any;
+        steps: any;
         productSuggestions: any[];
         id: number;
         name: string;
         description: string;
-        ingredients: {
-            ingredient_id: number;
-            ingredient_name: string;
-            quantity?: string;
-        }[];
-        steps: string[];
         prepTime: number;
         cookTime: number;
         servings: number;

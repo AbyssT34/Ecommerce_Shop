@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { cn } from '@shared/utils';
 
-interface GlassCardProps {
+interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   className?: string;
   variant?: 'light' | 'dark';
@@ -13,9 +13,11 @@ export function GlassCard({
   className,
   variant = 'light',
   hover = false,
+  ...rest
 }: GlassCardProps) {
   return (
     <div
+      {...rest}
       className={cn(
         'rounded-2xl shadow-xl',
         variant === 'light' ? 'glass' : 'glass-dark',

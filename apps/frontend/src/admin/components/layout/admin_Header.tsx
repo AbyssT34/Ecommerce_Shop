@@ -13,7 +13,7 @@ export function AdminHeader() {
             <div className="w-8 h-8 bg-gradient-accent rounded-lg flex items-center justify-center">
               <span className="text-lg font-bold text-white">🛡️</span>
             </div>
-            <span className="text-xl font-bold gradient-text">Admin Panel</span>
+            <span className="text-xl font-bold gradient-text">Quản trị</span>
           </Link>
 
           {/* User Menu */}
@@ -26,7 +26,7 @@ export function AdminHeader() {
               onClick={logout}
               className="px-4 py-2 glass rounded-lg text-text-primary hover:bg-white/10 transition-colors"
             >
-              Logout
+              Đăng xuất
             </button>
           </div>
         </div>

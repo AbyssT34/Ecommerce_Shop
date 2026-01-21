@@ -9,7 +9,8 @@ import { ordersApi } from '@shared/api';
 import { formatCurrency } from '@shared/utils';
 
 const checkoutSchema = z.object({
-  shippingAddress: z.string().min(10, 'Please enter a complete address'),
+  shippingAddress: z.string().min(10, 'Vui lòng nhập địa chỉ đầy đủ'),
+  phoneNumber: z.string().min(9, 'Số điện thoại không hợp lệ'),
   notes: z.string().optional(),
 });
 
@@ -31,7 +32,7 @@ export function CheckoutPage() {
 
   const onSubmit = async (data: CheckoutForm) => {
     if (items.length === 0) {
-      setError('root', { message: 'Your cart is empty' });
+      setError('root', { message: 'Giỏ hàng của bạn đang trống' });
       return;
     }
 
@@ -40,12 +41,12 @@ export function CheckoutPage() {
       const orderItems = items.map((item) => ({
         productId: item.product.id,
         quantity: item.quantity,
-        price: item.product.price,
       }));
 
       await ordersApi.create({
         items: orderItems,
         shippingAddress: data.shippingAddress,
+        phoneNumber: data.phoneNumber,
         notes: data.notes,
       });
 
@@ -53,7 +54,7 @@ export function CheckoutPage() {
       navigate('/orders');
     } catch (error: any) {
       setError('root', {
-        message: error.response?.data?.message || 'Failed to create order',
+        message: error.response?.data?.message || 'Không thể tạo đơn hàng',
       });
     } finally {
       setIsLoading(false);
@@ -66,13 +67,13 @@ export function CheckoutPage() {
         <GlassCard className="p-12 text-center">
           <div className="text-6xl mb-4">🛒</div>
           <h2 className="text-2xl font-bold text-text-primary mb-4">
-            Your cart is empty
+            Giỏ hàng trống
           </h2>
           <p className="text-text-secondary mb-8">
-            Add items to your cart before checking out
+            Vui lòng thêm sản phẩm trước khi thanh toán
           </p>
           <GlassButton variant="primary" size="lg" onClick={() => navigate('/products')}>
-            Browse Products
+            Mua sắm ngay
           </GlassButton>
         </GlassCard>
       </div>
@@ -83,8 +84,8 @@ export function CheckoutPage() {
     <div className="container mx-auto px-4 py-12">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold gradient-text mb-2">Checkout</h1>
-        <p className="text-text-secondary">Complete your order</p>
+        <h1 className="text-4xl font-bold gradient-text mb-2">Thanh toán</h1>
+        <p className="text-text-secondary">Hoàn tất đơn hàng của bạn</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -94,25 +95,34 @@ export function CheckoutPage() {
             {/* Shipping Address */}
             <GlassCard className="p-6">
               <h2 className="text-xl font-bold text-text-primary mb-6">
-                Shipping Information
+                Thông tin giao hàng
               </h2>
 
               <div className="space-y-4">
                 <GlassInput
-                  label="Shipping Address"
+                  label="Địa chỉ nhận hàng"
                   type="text"
-                  placeholder="123 Main St, City, State, Zip"
+                  placeholder="Số nhà, đường, phường/xã..."
                   fullWidth
                   error={errors.shippingAddress?.message}
                   {...register('shippingAddress')}
                 />
 
+                <GlassInput
+                  label="Số điện thoại"
+                  type="tel"
+                  placeholder="0901234567"
+                  fullWidth
+                  error={errors.phoneNumber?.message}
+                  {...register('phoneNumber')}
+                />
+
                 <div>
                   <label className="block text-text-primary font-medium mb-2">
-                    Order Notes (Optional)
+                    Ghi chú đơn hàng (Tùy chọn)
                   </label>
                   <textarea
-                    placeholder="Any special instructions for your order..."
+                    placeholder="Lời nhắn cho người bán..."
                     rows={4}
                     className="w-full glass px-4 py-3 rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-teal resize-none"
                     {...register('notes')}
@@ -127,14 +137,14 @@ export function CheckoutPage() {
             {/* Payment Info */}
             <GlassCard className="p-6">
               <h2 className="text-xl font-bold text-text-primary mb-4">
-                Payment Method
+                Phương thức thanh toán
               </h2>
               <div className="p-4 glass-dark rounded-lg">
                 <p className="text-text-secondary text-sm">
-                  💵 Cash on Delivery (COD)
+                  💵 Thanh toán khi nhận hàng (COD)
                 </p>
                 <p className="text-text-secondary text-xs mt-2">
-                  Pay when you receive your order
+                  Bạn sẽ thanh toán khi nhận được hàng
                 </p>
               </div>
             </GlassCard>
@@ -155,7 +165,7 @@ export function CheckoutPage() {
                 fullWidth
                 loading={isLoading}
               >
-                Place Order
+                Đặt hàng
               </GlassButton>
             </div>
           </form>
@@ -165,7 +175,7 @@ export function CheckoutPage() {
         <div className="lg:col-span-1">
           <GlassCard className="p-6 sticky top-4">
             <h2 className="text-xl font-bold text-text-primary mb-6">
-              Order Summary
+              Chi tiết đơn hàng
             </h2>
 
             {/* Items List */}
@@ -193,17 +203,17 @@ export function CheckoutPage() {
             {/* Totals */}
             <div className="space-y-2 mb-6 border-t border-white/10 pt-4">
               <div className="flex items-center justify-between text-text-secondary text-sm">
-                <span>Subtotal</span>
-                <span>{formatCurrency(totalPrice)}</span>
+                <span>Tạm tính</span>
+                <span>{formatCurrency(parseFloat(totalPrice))}</span>
               </div>
               <div className="flex items-center justify-between text-text-secondary text-sm">
-                <span>Shipping</span>
-                <span className="text-success">Free</span>
+                <span>Phí vận chuyển</span>
+                <span className="text-success">Miễn phí</span>
               </div>
               <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                <span className="text-lg font-semibold text-text-primary">Total</span>
+                <span className="text-lg font-semibold text-text-primary">Tổng cộng</span>
                 <span className="text-2xl font-bold gradient-text">
-                  {formatCurrency(totalPrice)}
+                  {formatCurrency(parseFloat(totalPrice))}
                 </span>
               </div>
             </div>
@@ -218,7 +228,7 @@ export function CheckoutPage() {
                 loading={isLoading}
                 onClick={handleSubmit(onSubmit)}
               >
-                Place Order
+                Đặt hàng
               </GlassButton>
             </div>
           </GlassCard>

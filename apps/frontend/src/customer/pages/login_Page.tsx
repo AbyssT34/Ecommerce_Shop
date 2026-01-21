@@ -7,8 +7,8 @@ import { GlassCard, GlassButton, GlassInput } from '@shared/components';
 import { useAuthStore } from '@shared/store';
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email('Email không hợp lệ'),
+  password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -28,13 +28,17 @@ export function LoginPage() {
   });
 
   const onSubmit = async (data: LoginForm) => {
+    console.log('Login attempt with:', data.email);
     setIsLoading(true);
     try {
       await login(data.email, data.password);
+      console.log('Login successful, navigating to home...');
       navigate('/');
     } catch (error: any) {
+      console.error('Login error:', error);
+      console.error('Error response:', error.response);
       setError('root', {
-        message: error.response?.data?.message || 'Login failed',
+        message: error.response?.data?.message || 'Đăng nhập thất bại',
       });
     } finally {
       setIsLoading(false);
@@ -45,22 +49,22 @@ export function LoginPage() {
     <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4">
       <GlassCard className="w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold gradient-text mb-2">Welcome Back</h1>
-          <p className="text-text-secondary">Login to your account</p>
+          <h1 className="text-3xl font-bold gradient-text mb-2">Đăng nhập</h1>
+          <p className="text-text-secondary">Chào mừng bạn quay trở lại</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <GlassInput
             label="Email"
             type="email"
-            placeholder="your@email.com"
+            placeholder="email@cuaban.com"
             fullWidth
             error={errors.email?.message}
             {...register('email')}
           />
 
           <GlassInput
-            label="Password"
+            label="Mật khẩu"
             type="password"
             placeholder="••••••••"
             fullWidth
@@ -81,15 +85,15 @@ export function LoginPage() {
             fullWidth
             loading={isLoading}
           >
-            Login
+            Đăng nhập
           </GlassButton>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-text-secondary text-sm">
-            Don't have an account?{' '}
+            Chưa có tài khoản?{' '}
             <Link to="/register" className="text-primary-500 hover:text-primary-600">
-              Register here
+              Đăng ký ngay
             </Link>
           </p>
         </div>

@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { GlassCard, GlassButton, GlassInput } from '@shared/components';
+import { GlassCard, GlassInput, ProductCard } from '@shared/components';
 import { productsApi, categoriesApi } from '@shared/api';
 import type { Product, Category } from '@shared/types/product_Types';
-import { formatCurrency } from '@shared/utils';
 import { useCartStore } from '@shared/store';
 
 export function ProductsPage() {
@@ -43,9 +42,9 @@ export function ProductsPage() {
     <div className="container mx-auto px-4 py-12">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold gradient-text mb-4">Shop Ingredients</h1>
+        <h1 className="text-4xl font-bold gradient-text mb-4">Shop Nguyên Liệu</h1>
         <p className="text-text-secondary text-lg">
-          Browse our fresh ingredients for your cooking needs
+          Chọn mua nguyên liệu tươi ngon nhất cho bữa ăn của bạn
         </p>
       </div>
 
@@ -56,7 +55,7 @@ export function ProductsPage() {
           <div className="flex-1">
             <GlassInput
               type="text"
-              placeholder="Search products..."
+              placeholder="Tìm kiếm sản phẩm..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               fullWidth
@@ -71,7 +70,7 @@ export function ProductsPage() {
               onChange={(e) => setShowInStock(e.target.checked)}
               className="w-4 h-4 accent-accent-teal"
             />
-            <span className="text-text-primary">In Stock Only</span>
+            <span className="text-text-primary">Chỉ hiện còn hàng</span>
           </label>
         </div>
 
@@ -79,23 +78,21 @@ export function ProductsPage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedCategory(null)}
-            className={`px-4 py-2 rounded-lg transition-all ${
-              selectedCategory === null
+            className={`px-4 py-2 rounded-lg transition-all ${selectedCategory === null
                 ? 'bg-gradient-accent text-white'
                 : 'glass text-text-secondary hover:text-text-primary'
-            }`}
+              }`}
           >
-            All Categories
+            Tất cả
           </button>
           {categories.map((category: Category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-lg transition-all ${
-                selectedCategory === category.id
+              className={`px-4 py-2 rounded-lg transition-all ${selectedCategory === category.id
                   ? 'bg-gradient-accent text-white'
                   : 'glass text-text-secondary hover:text-text-primary'
-              }`}
+                }`}
             >
               {category.name}
             </button>
@@ -107,60 +104,23 @@ export function ProductsPage() {
       {productsLoading ? (
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent-teal border-t-transparent"></div>
-          <p className="text-text-secondary mt-4">Loading products...</p>
+          <p className="text-text-secondary mt-4">Đang tải sản phẩm...</p>
         </div>
       ) : filteredProducts.length === 0 ? (
         <GlassCard className="p-12 text-center">
-          <p className="text-text-secondary text-lg">No products found</p>
+          <p className="text-text-secondary text-lg">Không tìm thấy sản phẩm nào</p>
         </GlassCard>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product: Product) => (
-            <GlassCard key={product.id} className="p-6 flex flex-col" hover>
-              {/* Product Image Placeholder */}
-              <div className="w-full h-48 bg-gradient-accent rounded-lg mb-4 flex items-center justify-center">
-                <span className="text-6xl">🥗</span>
-              </div>
-
-              {/* Product Info */}
-              <h3 className="text-xl font-semibold text-text-primary mb-2">
-                {product.name}
-              </h3>
-
-              {product.description && (
-                <p className="text-text-secondary text-sm mb-4 flex-1">
-                  {product.description}
-                </p>
-              )}
-
-              {/* Stock Badge */}
-              <div className="mb-4">
-                {product.stockQuantity > 0 ? (
-                  <span className="inline-block px-3 py-1 bg-success/20 text-success text-xs font-semibold rounded-full">
-                    In Stock ({product.stockQuantity})
-                  </span>
-                ) : (
-                  <span className="inline-block px-3 py-1 bg-error/20 text-error text-xs font-semibold rounded-full">
-                    Out of Stock
-                  </span>
-                )}
-              </div>
-
-              {/* Price & Action */}
-              <div className="flex items-center justify-between mt-auto">
-                <span className="text-2xl font-bold gradient-text">
-                  {formatCurrency(product.price)}
-                </span>
-                <GlassButton
-                  variant="primary"
-                  size="sm"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={product.stockQuantity === 0}
-                >
-                  Add to Cart
-                </GlassButton>
-              </div>
-            </GlassCard>
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={handleAddToCart}
+              showAddButton={true}
+              size="lg" // Use large cards for products page
+              className="h-full"
+            />
           ))}
         </div>
       )}

@@ -34,11 +34,11 @@ let RecipesController = class RecipesController {
     suggestRecipesFromCart(body) {
         return this.recipesService.suggestRecipesFromCart(body.productIds);
     }
-    findOne(id) {
-        return this.recipesService.findOne(+id);
-    }
     getRecipeWithProducts(id) {
         return this.recipesService.getRecipeWithProducts(+id);
+    }
+    findOne(id) {
+        return this.recipesService.findOne(+id);
     }
     update(id, updateRecipeDto) {
         return this.recipesService.update(+id, updateRecipeDto);
@@ -76,19 +76,19 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RecipesController.prototype, "suggestRecipesFromCart", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], RecipesController.prototype, "findOne", null);
-__decorate([
     (0, common_1.Get)(':id/with-products'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], RecipesController.prototype, "getRecipeWithProducts", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], RecipesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, common_1.UseGuards)(jwt_Auth_guard_1.JwtAuthGuard, admin_Guard_guard_1.AdminGuard),

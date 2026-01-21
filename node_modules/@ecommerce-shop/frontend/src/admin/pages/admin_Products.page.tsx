@@ -9,12 +9,14 @@ import type { Product } from '@shared/types/product_Types';
 import { formatCurrency } from '@shared/utils';
 
 const productSchema = z.object({
-  name: z.string().min(2, 'Name is required'),
+  name: z.string().min(2, 'Tên sản phẩm là bắt buộc'),
+  sku: z.string().min(1, 'Mã SKU là bắt buộc'),
   description: z.string().optional(),
-  price: z.number().min(0, 'Price must be positive'),
-  stockQuantity: z.number().min(0, 'Stock must be non-negative'),
-  categoryId: z.number().min(1, 'Category is required'),
+  price: z.number().min(0, 'Giá phải lớn hơn hoặc bằng 0'),
+  stockQuantity: z.number().min(0, 'Số lượng tồn kho phải lớn hơn hoặc bằng 0'),
+  categoryId: z.number().min(1, 'Danh mục là bắt buộc'),
   unit: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 
 type ProductForm = z.infer<typeof productSchema>;
@@ -75,11 +77,14 @@ export function AdminProductsPage() {
     if (product) {
       setEditingProduct(product);
       setValue('name', product.name);
+      setValue('sku', product.sku || '');
       setValue('description', product.description || '');
       setValue('price', product.price);
       setValue('stockQuantity', product.stockQuantity);
-      setValue('categoryId', product.category.id);
+      setValue('categoryId', product.category?.id || 1);
+      setValue('categoryId', product.category?.id || 1);
       setValue('unit', product.unit || '');
+      setValue('imageUrl', product.imageUrl || '');
     } else {
       setEditingProduct(null);
       reset();
@@ -112,11 +117,11 @@ export function AdminProductsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold gradient-text mb-2">Products Management</h1>
-          <p className="text-text-secondary">Manage your product inventory</p>
+          <h1 className="text-3xl font-bold gradient-text mb-2">Quản lý Sản phẩm</h1>
+          <p className="text-text-secondary">Quản lý kho hàng và sản phẩm của bạn</p>
         </div>
         <GlassButton variant="primary" size="lg" onClick={() => handleOpenModal()}>
-          + Add Product
+          + Thêm Sản phẩm
         </GlassButton>
       </div>
 
@@ -132,12 +137,12 @@ export function AdminProductsPage() {
               <thead className="bg-white/5 border-b border-white/10">
                 <tr>
                   <th className="px-6 py-4 text-left text-text-primary font-semibold">ID</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Name</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Category</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Price</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Stock</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Status</th>
-                  <th className="px-6 py-4 text-right text-text-primary font-semibold">Actions</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Tên sản phẩm</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Danh mục</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Giá</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Tồn kho</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Trạng thái</th>
+                  <th className="px-6 py-4 text-right text-text-primary font-semibold">Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -154,7 +159,7 @@ export function AdminProductsPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-text-secondary">{product.category.name}</td>
+                    <td className="px-6 py-4 text-text-secondary">{product.category?.name || 'No category'}</td>
                     <td className="px-6 py-4 text-text-primary font-semibold">
                       {formatCurrency(product.price)}
                     </td>
@@ -163,9 +168,9 @@ export function AdminProductsPage() {
                     </td>
                     <td className="px-6 py-4">
                       {product.stockQuantity > 0 ? (
-                        <Badge variant="success">In Stock</Badge>
+                        <Badge variant="success">Còn hàng</Badge>
                       ) : (
-                        <Badge variant="error">Out of Stock</Badge>
+                        <Badge variant="error">Hết hàng</Badge>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -174,13 +179,13 @@ export function AdminProductsPage() {
                           onClick={() => handleOpenModal(product)}
                           className="px-3 py-1 glass rounded text-text-primary hover:bg-white/10 text-sm"
                         >
-                          Edit
+                          Sửa
                         </button>
                         <button
                           onClick={() => handleDelete(product.id)}
                           className="px-3 py-1 glass rounded text-error hover:bg-error/10 text-sm"
                         >
-                          Delete
+                          Xóa
                         </button>
                       </div>
                     </td>
@@ -197,25 +202,36 @@ export function AdminProductsPage() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <GlassCard className="w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold gradient-text mb-6">
-              {editingProduct ? 'Edit Product' : 'Add New Product'}
+              {editingProduct ? 'Chỉnh sửa Sản phẩm' : 'Thêm Sản phẩm mới'}
             </h2>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <GlassInput
-                label="Product Name"
-                type="text"
-                placeholder="Fresh Tomatoes"
-                fullWidth
-                error={errors.name?.message}
-                {...register('name')}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <GlassInput
+                  label="Tên sản phẩm"
+                  type="text"
+                  placeholder="Ví dụ: Cà chua tươi"
+                  fullWidth
+                  error={errors.name?.message}
+                  {...register('name')}
+                />
+
+                <GlassInput
+                  label="Mã SKU"
+                  type="text"
+                  placeholder="SP-001"
+                  fullWidth
+                  error={errors.sku?.message}
+                  {...register('sku')}
+                />
+              </div>
 
               <div>
                 <label className="block text-text-primary font-medium mb-2">
-                  Description (Optional)
+                  Mô tả (Tùy chọn)
                 </label>
                 <textarea
-                  placeholder="Product description..."
+                  placeholder="Mô tả chi tiết sản phẩm..."
                   rows={3}
                   className="w-full glass px-4 py-3 rounded-lg text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-accent-teal resize-none"
                   {...register('description')}
@@ -227,7 +243,7 @@ export function AdminProductsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <GlassInput
-                  label="Price (VND)"
+                  label="Giá (VND)"
                   type="number"
                   step="0.01"
                   placeholder="50000"
@@ -237,7 +253,7 @@ export function AdminProductsPage() {
                 />
 
                 <GlassInput
-                  label="Stock Quantity"
+                  label="Số lượng tồn kho"
                   type="number"
                   placeholder="100"
                   fullWidth
@@ -248,12 +264,12 @@ export function AdminProductsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-text-primary font-medium mb-2">Category</label>
+                  <label className="block text-text-primary font-medium mb-2">Danh mục</label>
                   <select
                     className="w-full glass px-4 py-3 rounded-lg text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-teal"
                     {...register('categoryId', { valueAsNumber: true })}
                   >
-                    <option value="">Select category</option>
+                    <option value="">Chọn danh mục</option>
                     {categories.map((category: any) => (
                       <option key={category.id} value={category.id}>
                         {category.name}
@@ -264,6 +280,15 @@ export function AdminProductsPage() {
                     <p className="text-error text-sm mt-1">{errors.categoryId.message}</p>
                   )}
                 </div>
+
+                <GlassInput
+                  label="Image URL (Optional)"
+                  type="text"
+                  placeholder="https://example.com/image.jpg"
+                  fullWidth
+                  error={errors.imageUrl?.message}
+                  {...register('imageUrl')}
+                />
 
                 <GlassInput
                   label="Unit (Optional)"
@@ -283,7 +308,7 @@ export function AdminProductsPage() {
                   fullWidth
                   loading={createMutation.isPending || updateMutation.isPending}
                 >
-                  {editingProduct ? 'Update Product' : 'Create Product'}
+                  {editingProduct ? 'Cập nhật' : 'Tạo mới'}
                 </GlassButton>
                 <GlassButton
                   type="button"
@@ -292,7 +317,7 @@ export function AdminProductsPage() {
                   fullWidth
                   onClick={handleCloseModal}
                 >
-                  Cancel
+                  Hủy bỏ
                 </GlassButton>
               </div>
             </form>

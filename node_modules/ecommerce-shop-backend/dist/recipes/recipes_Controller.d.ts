@@ -9,18 +9,13 @@ export declare class RecipesController {
     suggestRecipesFromCart(body: {
         productIds: number[];
     }): Promise<any[]>;
-    findOne(id: string): Promise<import("./entities/recipe_Entity").Recipe>;
     getRecipeWithProducts(id: string): Promise<{
+        ingredients: any;
+        steps: any;
         productSuggestions: any[];
         id: number;
         name: string;
         description: string;
-        ingredients: {
-            ingredient_id: number;
-            ingredient_name: string;
-            quantity?: string;
-        }[];
-        steps: string[];
         prepTime: number;
         cookTime: number;
         servings: number;
@@ -30,6 +25,7 @@ export declare class RecipesController {
         createdAt: Date;
         updatedAt: Date;
     }>;
+    findOne(id: string): Promise<import("./entities/recipe_Entity").Recipe>;
     update(id: string, updateRecipeDto: CreateRecipeDto): Promise<import("./entities/recipe_Entity").Recipe>;
     remove(id: string): Promise<{
         message: string;

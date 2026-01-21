@@ -15,6 +15,7 @@ const products_Module_1 = require("./products/products_Module");
 const cart_Module_1 = require("./cart/cart_Module");
 const orders_Module_1 = require("./orders/orders_Module");
 const recipes_Module_1 = require("./recipes/recipes_Module");
+const users_Module_1 = require("./users/users_Module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
             cart_Module_1.CartModule,
             orders_Module_1.OrdersModule,
             recipes_Module_1.RecipesModule,
+            users_Module_1.UsersModule,
         ],
         controllers: [],
         providers: [],

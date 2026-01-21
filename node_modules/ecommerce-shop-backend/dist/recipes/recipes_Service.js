@@ -61,25 +61,42 @@ let RecipesService = class RecipesService {
         });
         const availableRecipes = [];
         for (const recipe of recipes) {
-            if (!recipe.ingredients || recipe.ingredients.length === 0) {
+            const ingredients = typeof recipe.ingredients === 'string'
+                ? JSON.parse(recipe.ingredients)
+                : recipe.ingredients;
+            if (!ingredients || ingredients.length === 0) {
                 continue;
             }
-            const ingredientIds = recipe.ingredients.map((ing) => ing.ingredient_id);
+            const ingredientIds = ingredients.map((ing) => ing.ingredient_id);
             if (ingredientIds.length === 0) {
                 continue;
             }
-            const isRecipeAvailable = await this.checkRecipeAvailability(ingredientIds);
-            if (isRecipeAvailable) {
-                const productSuggestions = await this.getProductSuggestionsForRecipe(ingredientIds);
-                availableRecipes.push({
-                    ...recipe,
-                    productSuggestions,
-                    totalAvailability: productSuggestions.reduce((sum, p) => sum + p.stockQuantity, 0),
-                });
-            }
+            const productSuggestions = await this.getProductSuggestionsForRecipe(ingredientIds);
+            const availableIngredientIds = new Set(productSuggestions.map(p => p.ingredientId));
+            const missingCount = ingredientIds.filter(id => !availableIngredientIds.has(id)).length;
+            const totalStock = productSuggestions.reduce((sum, p) => sum + p.product.stockQuantity, 0);
+            availableRecipes.push({
+                ...recipe,
+                ingredients: ingredients.map(ing => ({
+                    ...ing,
+                    isAvailable: availableIngredientIds.has(ing.ingredient_id)
+                })),
+                productSuggestions,
+                totalAvailability: totalStock,
+                missingIngredientsCount: missingCount,
+                isFullyAvailable: missingCount === 0
+            });
         }
-        availableRecipes.sort((a, b) => b.totalAvailability - a.totalAvailability);
-        return availableRecipes;
+        availableRecipes.sort((a, b) => {
+            if (a.isFullyAvailable !== b.isFullyAvailable) {
+                return a.isFullyAvailable ? -1 : 1;
+            }
+            if (a.missingIngredientsCount !== b.missingIngredientsCount) {
+                return a.missingIngredientsCount - b.missingIngredientsCount;
+            }
+            return b.totalAvailability - a.totalAvailability;
+        });
+        return availableRecipes.slice(0, 12);
     }
     async checkRecipeAvailability(ingredientIds) {
         for (const ingredientId of ingredientIds) {
@@ -127,10 +144,26 @@ let RecipesService = class RecipesService {
     }
     async getRecipeWithProducts(id) {
         const recipe = await this.findOne(id);
-        const ingredientIds = recipe.ingredients.map((ing) => ing.ingredient_id);
-        const productSuggestions = await this.getProductSuggestionsForRecipe(ingredientIds);
+        const ingredients = typeof recipe.ingredients === 'string'
+            ? JSON.parse(recipe.ingredients)
+            : recipe.ingredients;
+        const steps = typeof recipe.steps === 'string'
+            ? JSON.parse(recipe.steps)
+            : recipe.steps;
+        let productSuggestions = [];
+        try {
+            const ingredientIds = ingredients.map((ing) => ing.ingredient_id).filter(id => id);
+            if (ingredientIds.length > 0) {
+                productSuggestions = await this.getProductSuggestionsForRecipe(ingredientIds);
+            }
+        }
+        catch (error) {
+            console.error('Error getting product suggestions:', error);
+        }
         return {
             ...recipe,
+            ingredients,
+            steps,
             productSuggestions,
         };
     }
@@ -158,10 +191,13 @@ let RecipesService = class RecipesService {
         });
         const suggestions = [];
         for (const recipe of recipes) {
-            if (!recipe.ingredients || recipe.ingredients.length === 0) {
+            const ingredients = typeof recipe.ingredients === 'string'
+                ? JSON.parse(recipe.ingredients)
+                : recipe.ingredients;
+            if (!ingredients || ingredients.length === 0) {
                 continue;
             }
-            const recipeIngredientIds = recipe.ingredients.map(ing => ing.ingredient_id);
+            const recipeIngredientIds = ingredients.map(ing => ing.ingredient_id);
             const matchedIngredients = recipeIngredientIds.filter(id => cartIngredientIds.has(id));
             const matchPercentage = (matchedIngredients.length / recipeIngredientIds.length) * 100;
             if (matchPercentage >= 30) {

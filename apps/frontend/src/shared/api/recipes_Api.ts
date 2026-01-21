@@ -18,10 +18,13 @@ export const recipesApi = {
     return response.data.map((recipe: any) => ({
       ...recipe,
       isAvailable: true,
-      estimatedCost: recipe.productSuggestions?.reduce((sum: number, p: any) => sum + (p.product?.price || 0), 0),
+      estimatedCost: recipe.productSuggestions?.reduce((sum: number, p: any) => sum + parseFloat(p.product?.price || 0), 0),
       productSuggestions: recipe.productSuggestions?.map((s: any) => ({
         ...s,
-        suggestedProduct: s.product,
+        suggestedProduct: s.product ? {
+          ...s.product,
+          price: parseFloat(s.product.price || 0),
+        } : null,
         isAvailable: s.product?.stockQuantity > 0,
       })),
     }));
@@ -44,10 +47,13 @@ export const recipesApi = {
     return {
       ...recipe,
       isAvailable: recipe.productSuggestions?.every((s: any) => s.product?.stockQuantity > 0),
-      estimatedCost: recipe.productSuggestions?.reduce((sum: number, p: any) => sum + (p.product?.price || 0), 0),
+      estimatedCost: recipe.productSuggestions?.reduce((sum: number, p: any) => sum + parseFloat(p.product?.price || 0), 0),
       productSuggestions: recipe.productSuggestions?.map((s: any) => ({
         ...s,
-        suggestedProduct: s.product,
+        suggestedProduct: s.product ? {
+          ...s.product,
+          price: parseFloat(s.product.price || 0),
+        } : null,
         isAvailable: s.product?.stockQuantity > 0,
       })),
     };
@@ -59,5 +65,25 @@ export const recipesApi = {
   getWithProducts: async (id: number): Promise<AvailableRecipe> => {
     const response = await axiosInstance.get<AvailableRecipe>(`/recipes/${id}/with-products`);
     return response.data;
+  },
+
+  /**
+   * AI-powered recipe suggestions based on cart items
+   */
+  suggestFromCart: async (productIds: number[]): Promise<any[]> => {
+    const response = await axiosInstance.post<any[]>('/recipes/suggest-from-cart', { productIds });
+    return response.data.map((recipe: any) => ({
+      ...recipe,
+      productSuggestions: {
+        inCart: recipe.productSuggestions?.inCart?.map((s: any) => ({
+          ...s,
+          suggestedProduct: s.product,
+        })) || [],
+        needed: recipe.productSuggestions?.needed?.map((s: any) => ({
+          ...s,
+          suggestedProduct: s.product,
+        })) || [],
+      },
+    }));
   },
 };

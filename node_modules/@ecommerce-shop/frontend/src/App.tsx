@@ -12,6 +12,10 @@ import { AdminLayout } from './admin/components/layout/admin_Layout';
 import { AdminDashboardPage } from './admin/pages/admin_Dashboard.page';
 import { AdminProductsPage } from './admin/pages/admin_Products.page';
 import { AdminOrdersPage } from './admin/pages/admin_Orders.page';
+import { AdminCategoriesPage } from './admin/pages/admin_Categories.page';
+import { AdminIngredientsPage } from './admin/pages/admin_Ingredients.page';
+import { AdminRecipesPage } from './admin/pages/admin_Recipes.page';
+import { AdminUsersPage } from './admin/pages/admin_Users.page';
 import { useAuthStore } from '@shared/store';
 
 function ProtectedAdminRoute({ children }: { children: React.ReactNode }) {
@@ -44,7 +48,11 @@ function App() {
               <Routes>
                 <Route path="/" element={<AdminDashboardPage />} />
                 <Route path="/products" element={<AdminProductsPage />} />
+                <Route path="/categories" element={<AdminCategoriesPage />} />
+                <Route path="/ingredients" element={<AdminIngredientsPage />} />
+                <Route path="/recipes" element={<AdminRecipesPage />} />
                 <Route path="/orders" element={<AdminOrdersPage />} />
+                <Route path="/users" element={<AdminUsersPage />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
               </Routes>
             </AdminLayout>

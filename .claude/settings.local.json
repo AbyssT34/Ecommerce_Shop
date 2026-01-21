@@ -5,7 +5,9 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(npm run start:dev:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(npm run build)"
     ]
   }
 }

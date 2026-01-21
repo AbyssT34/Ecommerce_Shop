@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { GlassCard, Badge, GlassButton } from '@shared/components';
 import { ordersApi } from '@shared/api';
-import type { Order } from '@shared/types/order_Types';
+import type { Order, OrderStatus } from '@shared/types/order_Types';
 import { formatCurrency, formatDate } from '@shared/utils';
 
 export function AdminOrdersPage() {
@@ -15,8 +15,8 @@ export function AdminOrdersPage() {
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: Order['status'] }) =>
-      ordersApi.updateStatus(id, status),
+    mutationFn: ({ id, status }: { id: number; status: OrderStatus }) =>
+      ordersApi.updateStatus(id, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
       setSelectedOrder(null);
@@ -24,31 +24,43 @@ export function AdminOrdersPage() {
   });
 
   const handleApprove = (id: number) => {
-    if (confirm('Approve this order? Stock will be deducted.')) {
+    if (confirm('Duyệt đơn hàng này? Kho sẽ được cập nhật.')) {
       updateStatusMutation.mutate({ id, status: 'approved' });
     }
   };
 
   const handleReject = (id: number) => {
-    if (confirm('Reject this order? Stock will be refunded.')) {
+    if (confirm('Từ chối đơn hàng này? Kho sẽ được hoàn lại.')) {
       updateStatusMutation.mutate({ id, status: 'rejected' });
     }
   };
 
   const handleDeliver = (id: number) => {
-    if (confirm('Mark this order as delivered?')) {
+    if (confirm('Đánh dấu đơn hàng này đã giao?')) {
       updateStatusMutation.mutate({ id, status: 'delivered' });
     }
   };
 
-  const getStatusBadge = (status: Order['status']) => {
-    const variants: Record<Order['status'], 'warning' | 'success' | 'error' | 'info'> = {
+  const getStatusBadge = (status: OrderStatus) => {
+    const variants: Record<OrderStatus, 'warning' | 'success' | 'error' | 'info'> = {
       pending: 'warning',
       approved: 'success',
+      processing: 'info',
+      shipped: 'info',
+      delivered: 'success',
       rejected: 'error',
-      delivered: 'info',
+      cancelled: 'error',
     };
-    return <Badge variant={variants[status]}>{status.toUpperCase()}</Badge>;
+    const statusMap: Record<string, string> = {
+      pending: 'Chờ xử lý',
+      approved: 'Đã duyệt',
+      processing: 'Đang xử lý',
+      shipped: 'Đang giao',
+      delivered: 'Đã giao',
+      rejected: 'Đã từ chối',
+      cancelled: 'Đã hủy',
+    };
+    return <Badge variant={variants[status]}>{statusMap[status] || status}</Badge>;
   };
 
   const filteredOrders = {
@@ -62,8 +74,8 @@ export function AdminOrdersPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold gradient-text mb-2">Orders Management</h1>
-        <p className="text-text-secondary">Manage and process customer orders</p>
+        <h1 className="text-3xl font-bold gradient-text mb-2">Quản lý Đơn hàng</h1>
+        <p className="text-text-secondary">Quản lý và xử lý đơn hàng của khách</p>
       </div>
 
       {/* Stats Cards */}
@@ -71,7 +83,7 @@ export function AdminOrdersPage() {
         <GlassCard className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-text-secondary text-sm mb-1">Pending</p>
+              <p className="text-text-secondary text-sm mb-1">Chờ xử lý</p>
               <p className="text-3xl font-bold text-warning">{filteredOrders.pending.length}</p>
             </div>
             <div className="text-4xl">⏳</div>
@@ -81,7 +93,7 @@ export function AdminOrdersPage() {
         <GlassCard className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-text-secondary text-sm mb-1">Approved</p>
+              <p className="text-text-secondary text-sm mb-1">Đã duyệt</p>
               <p className="text-3xl font-bold text-success">{filteredOrders.approved.length}</p>
             </div>
             <div className="text-4xl">✅</div>
@@ -91,7 +103,7 @@ export function AdminOrdersPage() {
         <GlassCard className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-text-secondary text-sm mb-1">Delivered</p>
+              <p className="text-text-secondary text-sm mb-1">Đã giao</p>
               <p className="text-3xl font-bold text-info">{filteredOrders.delivered.length}</p>
             </div>
             <div className="text-4xl">📦</div>
@@ -101,7 +113,7 @@ export function AdminOrdersPage() {
         <GlassCard className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-text-secondary text-sm mb-1">Rejected</p>
+              <p className="text-text-secondary text-sm mb-1">Đã hủy/Từ chối</p>
               <p className="text-3xl font-bold text-error">{filteredOrders.rejected.length}</p>
             </div>
             <div className="text-4xl">❌</div>
@@ -120,13 +132,13 @@ export function AdminOrdersPage() {
             <table className="w-full">
               <thead className="bg-white/5 border-b border-white/10">
                 <tr>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Order ID</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Customer</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Items</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Total</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Status</th>
-                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Date</th>
-                  <th className="px-6 py-4 text-right text-text-primary font-semibold">Actions</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Mã ĐH</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Khách hàng</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Số lượng</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Tổng tiền</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Trạng thái</th>
+                  <th className="px-6 py-4 text-left text-text-primary font-semibold">Ngày đặt</th>
+                  <th className="px-6 py-4 text-right text-text-primary font-semibold">Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,13 +151,13 @@ export function AdminOrdersPage() {
                     <td className="px-6 py-4 text-text-primary font-semibold">#{order.id}</td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="text-text-primary">{order.user.fullName}</p>
-                        <p className="text-text-secondary text-sm">{order.user.email}</p>
+                        <p className="text-text-primary">{order.user?.fullName || 'Unknown'}</p>
+                        <p className="text-text-secondary text-sm">{order.user?.email || 'N/A'}</p>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-text-secondary">{order.items.length} items</td>
+                    <td className="px-6 py-4 text-text-secondary">{order.orderItems.length} items</td>
                     <td className="px-6 py-4 text-text-primary font-semibold">
-                      {formatCurrency(order.totalPrice)}
+                      {formatCurrency(order.totalAmount)}
                     </td>
                     <td className="px-6 py-4">{getStatusBadge(order.status)}</td>
                     <td className="px-6 py-4 text-text-secondary text-sm">
@@ -160,14 +172,14 @@ export function AdminOrdersPage() {
                               className="px-3 py-1 glass rounded text-success hover:bg-success/10 text-sm"
                               disabled={updateStatusMutation.isPending}
                             >
-                              Approve
+                              Duyệt
                             </button>
                             <button
                               onClick={() => handleReject(order.id)}
                               className="px-3 py-1 glass rounded text-error hover:bg-error/10 text-sm"
                               disabled={updateStatusMutation.isPending}
                             >
-                              Reject
+                              Từ chối
                             </button>
                           </>
                         )}
@@ -177,7 +189,7 @@ export function AdminOrdersPage() {
                             className="px-3 py-1 glass rounded text-info hover:bg-info/10 text-sm"
                             disabled={updateStatusMutation.isPending}
                           >
-                            Mark Delivered
+                            Đã giao
                           </button>
                         )}
                       </div>
@@ -198,15 +210,15 @@ export function AdminOrdersPage() {
         >
           <GlassCard
             className="w-full max-w-3xl p-8 max-h-[90vh] overflow-y-auto"
-            onClick={(e: any) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold gradient-text mb-2">
-                  Order #{selectedOrder.id}
+                  Đơn hàng #{selectedOrder.id}
                 </h2>
                 <p className="text-text-secondary text-sm">
-                  Placed on {formatDate(selectedOrder.createdAt)}
+                  Đặt ngày {formatDate(selectedOrder.createdAt)}
                 </p>
               </div>
               {getStatusBadge(selectedOrder.status)}
@@ -214,23 +226,23 @@ export function AdminOrdersPage() {
 
             {/* Customer Info */}
             <div className="mb-6 p-4 glass-dark rounded-lg">
-              <h3 className="text-lg font-semibold text-text-primary mb-3">Customer Information</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-3">Thông tin khách hàng</h3>
               <div className="space-y-2 text-sm">
                 <p className="text-text-secondary">
-                  <span className="text-text-primary font-medium">Name:</span> {selectedOrder.user.fullName}
+                  <span className="text-text-primary font-medium">Tên:</span> {selectedOrder.user?.fullName || 'Unknown'}
                 </p>
                 <p className="text-text-secondary">
-                  <span className="text-text-primary font-medium">Email:</span> {selectedOrder.user.email}
+                  <span className="text-text-primary font-medium">Email:</span> {selectedOrder.user?.email || 'N/A'}
                 </p>
                 <p className="text-text-secondary">
-                  <span className="text-text-primary font-medium">Phone:</span> {selectedOrder.user.phone || 'N/A'}
+                  <span className="text-text-primary font-medium">SĐT:</span> {selectedOrder.phoneNumber || 'N/A'}
                 </p>
                 <p className="text-text-secondary">
-                  <span className="text-text-primary font-medium">Address:</span> {selectedOrder.shippingAddress}
+                  <span className="text-text-primary font-medium">Địa chỉ:</span> {selectedOrder.shippingAddress}
                 </p>
                 {selectedOrder.notes && (
                   <p className="text-text-secondary">
-                    <span className="text-text-primary font-medium">Notes:</span> {selectedOrder.notes}
+                    <span className="text-text-primary font-medium">Ghi chú:</span> {selectedOrder.notes}
                   </p>
                 )}
               </div>
@@ -238,23 +250,23 @@ export function AdminOrdersPage() {
 
             {/* Order Items */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-text-primary mb-3">Order Items</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-3">Sản phẩm</h3>
               <div className="space-y-3">
-                {selectedOrder.items.map((item) => (
+                {selectedOrder.orderItems.map((item) => (
                   <div key={item.id} className="flex items-center justify-between p-4 glass-dark rounded-lg">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-gradient-accent rounded-lg flex items-center justify-center">
                         <span className="text-xl">🥗</span>
                       </div>
                       <div>
-                        <p className="text-text-primary font-medium">{item.product.name}</p>
+                        <p className="text-text-primary font-medium">{item.productName}</p>
                         <p className="text-text-secondary text-sm">
-                          Qty: {item.quantity} × {formatCurrency(item.price)}
+                          Qty: {item.quantity} × {formatCurrency(item.unitPrice)}
                         </p>
                       </div>
                     </div>
                     <p className="text-text-primary font-semibold">
-                      {formatCurrency(item.quantity * item.price)}
+                      {formatCurrency(item.subtotal)}
                     </p>
                   </div>
                 ))}
@@ -263,9 +275,9 @@ export function AdminOrdersPage() {
 
             {/* Total */}
             <div className="flex items-center justify-between p-4 glass-dark rounded-lg mb-6">
-              <span className="text-lg font-semibold text-text-primary">Total Amount</span>
+              <span className="text-lg font-semibold text-text-primary">Tổng cộng</span>
               <span className="text-2xl font-bold gradient-text">
-                {formatCurrency(selectedOrder.totalPrice)}
+                {formatCurrency(selectedOrder.totalAmount)}
               </span>
             </div>
 
@@ -282,7 +294,7 @@ export function AdminOrdersPage() {
                     }}
                     loading={updateStatusMutation.isPending}
                   >
-                    Approve Order
+                    Duyệt đơn hàng
                   </GlassButton>
                   <GlassButton
                     variant="secondary"
@@ -293,7 +305,7 @@ export function AdminOrdersPage() {
                     }}
                     loading={updateStatusMutation.isPending}
                   >
-                    Reject Order
+                    Từ chối đơn hàng
                   </GlassButton>
                 </>
               )}
@@ -307,7 +319,7 @@ export function AdminOrdersPage() {
                   }}
                   loading={updateStatusMutation.isPending}
                 >
-                  Mark as Delivered
+                  Xác nhận đã giao
                 </GlassButton>
               )}
               <GlassButton
@@ -315,7 +327,7 @@ export function AdminOrdersPage() {
                 size="lg"
                 onClick={() => setSelectedOrder(null)}
               >
-                Close
+                Đóng
               </GlassButton>
             </div>
           </GlassCard>

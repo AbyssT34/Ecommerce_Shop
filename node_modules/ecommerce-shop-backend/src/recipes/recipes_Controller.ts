@@ -38,14 +38,14 @@ export class RecipesController {
     return this.recipesService.suggestRecipesFromCart(body.productIds);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.recipesService.findOne(+id);
-  }
-
   @Get(':id/with-products')
   getRecipeWithProducts(@Param('id') id: string) {
     return this.recipesService.getRecipeWithProducts(+id);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.recipesService.findOne(+id);
   }
 
   @Patch(':id')

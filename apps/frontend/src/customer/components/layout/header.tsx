@@ -30,19 +30,19 @@ export function Header() {
               to="/"
               className="text-text-secondary hover:text-text-primary transition-colors"
             >
-              Home
+              Trang chủ
             </Link>
             <Link
               to="/products"
               className="text-text-secondary hover:text-text-primary transition-colors"
             >
-              Products
+              Sản phẩm
             </Link>
             <Link
               to="/recipes"
               className="text-text-secondary hover:text-text-primary transition-colors"
             >
-              AI Recipes
+              Gợi ý AI
             </Link>
           </nav>
 
@@ -87,19 +87,19 @@ export function Header() {
                   </Link>
                 )}
                 <GlassButton variant="ghost" size="sm" onClick={handleLogout}>
-                  Logout
+                  Đăng xuất
                 </GlassButton>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Link to="/login">
                   <GlassButton variant="ghost" size="sm">
-                    Login
+                    Đăng nhập
                   </GlassButton>
                 </Link>
                 <Link to="/register">
                   <GlassButton variant="primary" size="sm">
-                    Register
+                    Đăng ký
                   </GlassButton>
                 </Link>
               </div>

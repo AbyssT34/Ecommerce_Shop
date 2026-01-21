@@ -66,4 +66,27 @@ export const categoriesApi = {
     const response = await axiosInstance.get<Category>(`/categories/${id}`);
     return response.data;
   },
+
+  /**
+   * Create category (Admin only)
+   */
+  create: async (data: { name: string; slug?: string; description?: string }): Promise<Category> => {
+    const response = await axiosInstance.post<Category>('/categories', data);
+    return response.data;
+  },
+
+  /**
+   * Update category (Admin only)
+   */
+  update: async (id: number, data: { name?: string; slug?: string; description?: string }): Promise<Category> => {
+    const response = await axiosInstance.patch<Category>(`/categories/${id}`, data);
+    return response.data;
+  },
+
+  /**
+   * Delete category (Admin only)
+   */
+  delete: async (id: number): Promise<void> => {
+    await axiosInstance.delete(`/categories/${id}`);
+  },
 };

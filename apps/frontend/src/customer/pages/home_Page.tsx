@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { productsApi, categoriesApi } from '@shared/api';
 import { recipesApi } from '@shared/api';
-import { GlassCard, GlassButton, Badge } from '@shared/components';
+import { GlassCard, GlassButton, Badge, ProductCard } from '@shared/components';
 import { formatCurrency } from '@shared/utils';
-import type { Product } from '@shared/types/product_Types';
 import type { RecipeWithAvailability } from '@shared/types/recipe_Types';
 
 export function HomePage() {
@@ -95,8 +94,8 @@ export function HomePage() {
               key={index}
               onClick={() => setCurrentBanner(index)}
               className={`w-3 h-3 rounded-full transition-all ${index === currentBanner
-                  ? 'bg-accent-teal w-8'
-                  : 'bg-white/40 hover:bg-white/60'
+                ? 'bg-accent-teal w-8'
+                : 'bg-white/40 hover:bg-white/60'
                 }`}
             />
           ))}
@@ -161,8 +160,8 @@ export function HomePage() {
                       {recipe.name}
                     </h3>
                     <div className="flex items-center gap-3 text-xs text-text-secondary mb-3">
-                      <span>⏱️ {recipe.cookTime || 30}p</span>
-                      <span>👥 {recipe.servings || 4}</span>
+                      <span>⏱️ {recipe.cookTime || 30} phút</span>
+                      <span>👥 {recipe.servings || 4} người</span>
                     </div>
                     {recipe.isAvailable && (
                       <Badge variant="success" className="text-xs">
@@ -208,52 +207,12 @@ export function HomePage() {
               </div>
             ) : (
               featuredProducts.map((product) => (
-                <Link key={product.id} to="/products">
-                  <GlassCard className="p-0 overflow-hidden group hover:scale-105 transition-transform h-full">
-                    <div className="aspect-square bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center relative">
-                      {product.stockQuantity < 10 && product.stockQuantity > 0 && (
-                        <div className="absolute top-2 left-2">
-                          <Badge variant="warning" className="text-xs">Sắp hết</Badge>
-                        </div>
-                      )}
-                      {product.stockQuantity === 0 && (
-                        <div className="absolute top-2 left-2">
-                          <Badge variant="error" className="text-xs">Hết hàng</Badge>
-                        </div>
-                      )}
-                      <span className="text-5xl">
-                        {product.name.includes('Thịt') ? '🥩' :
-                          product.name.includes('Cá') ? '🐟' :
-                            product.name.includes('Trứng') ? '🥚' :
-                              product.name.includes('Rau') || product.name.includes('Cải') ? '🥬' :
-                                product.name.includes('Cà chua') ? '🍅' :
-                                  product.name.includes('Hành') || product.name.includes('Tỏi') ? '🧅' :
-                                    product.name.includes('Gừng') || product.name.includes('Sả') ? '🌿' :
-                                      product.name.includes('Ớt') ? '🌶️' :
-                                        product.name.includes('Nước mắm') || product.name.includes('Đường') || product.name.includes('Muối') ? '🧂' :
-                                          '🥘'}
-                      </span>
-                    </div>
-                    <div className="p-3">
-                      <h3 className="text-sm text-text-primary mb-2 line-clamp-2 h-10">
-                        {product.name}
-                      </h3>
-                      <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-accent-teal">
-                          {formatCurrency(product.price)}
-                        </span>
-                        {product.unit && (
-                          <span className="text-xs text-text-secondary">/{product.unit}</span>
-                        )}
-                      </div>
-                      {product.stockQuantity > 0 && (
-                        <p className="text-xs text-text-secondary mt-1">
-                          Còn {product.stockQuantity} {product.unit}
-                        </p>
-                      )}
-                    </div>
-                  </GlassCard>
-                </Link>
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  size="sm"
+                  className="h-full"
+                />
               ))
             )}
           </div>

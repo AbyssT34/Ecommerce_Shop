@@ -4,6 +4,7 @@ import { CreateCategoryDto } from './dto/create_Category.dto';
 export declare class CategoriesService {
     private categoriesRepository;
     constructor(categoriesRepository: Repository<Category>);
+    private generateSlug;
     create(createCategoryDto: CreateCategoryDto): Promise<Category>;
     findAll(): Promise<Category[]>;
     findOne(id: number): Promise<Category>;

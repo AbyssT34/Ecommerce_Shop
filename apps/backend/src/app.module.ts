@@ -7,6 +7,7 @@ import { ProductsModule } from './products/products_Module';
 import { CartModule } from './cart/cart_Module';
 import { OrdersModule } from './orders/orders_Module';
 import { RecipesModule } from './recipes/recipes_Module';
+import { UsersModule } from './users/users_Module';
 
 @Module({
   imports: [
@@ -25,8 +26,9 @@ import { RecipesModule } from './recipes/recipes_Module';
     CartModule,
     OrdersModule,
     RecipesModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

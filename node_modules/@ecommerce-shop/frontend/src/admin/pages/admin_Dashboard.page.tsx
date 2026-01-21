@@ -29,10 +29,10 @@ export function AdminDashboardPage() {
     rejectedOrders: orders.filter((o: Order) => o.status === 'rejected').length,
     totalRevenue: orders
       .filter((o: Order) => o.status === 'delivered')
-      .reduce((sum: number, o: Order) => sum + o.totalPrice, 0),
+      .reduce((sum: number, o: Order) => sum + o.totalAmount, 0),
     pendingRevenue: orders
       .filter((o: Order) => o.status === 'pending' || o.status === 'approved')
-      .reduce((sum: number, o: Order) => sum + o.totalPrice, 0),
+      .reduce((sum: number, o: Order) => sum + o.totalAmount, 0),
   };
 
   const lowStockProducts = products
@@ -48,8 +48,8 @@ export function AdminDashboardPage() {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold gradient-text mb-2">Dashboard Overview</h1>
-        <p className="text-text-secondary">Welcome to your admin panel</p>
+        <h1 className="text-3xl font-bold gradient-text mb-2">Tổng quan Dashboard</h1>
+        <p className="text-text-secondary">Chào mừng bạn đến với bảng quản trị</p>
       </div>
 
       {/* Revenue Stats */}
@@ -57,7 +57,7 @@ export function AdminDashboardPage() {
         <GlassCard className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-text-secondary text-sm mb-1">Total Revenue (Delivered)</p>
+              <p className="text-text-secondary text-sm mb-1">Tổng doanh thu (Đã giao)</p>
               <p className="text-3xl font-bold gradient-text">{formatCurrency(stats.totalRevenue)}</p>
             </div>
             <div className="text-4xl">💰</div>
@@ -67,7 +67,7 @@ export function AdminDashboardPage() {
         <GlassCard className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-text-secondary text-sm mb-1">Pending Revenue</p>
+              <p className="text-text-secondary text-sm mb-1">Doanh thu chờ xử lý</p>
               <p className="text-3xl font-bold text-warning">{formatCurrency(stats.pendingRevenue)}</p>
             </div>
             <div className="text-4xl">⏳</div>
@@ -77,12 +77,12 @@ export function AdminDashboardPage() {
 
       {/* Product Stats */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold text-text-primary mb-4">Product Inventory</h2>
+        <h2 className="text-xl font-bold text-text-primary mb-4">Kho sản phẩm</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">Total Products</p>
+                <p className="text-text-secondary text-sm mb-1">Tổng sản phẩm</p>
                 <p className="text-3xl font-bold text-accent-teal">{stats.totalProducts}</p>
               </div>
               <div className="text-4xl">📦</div>
@@ -92,7 +92,7 @@ export function AdminDashboardPage() {
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">In Stock</p>
+                <p className="text-text-secondary text-sm mb-1">Còn hàng</p>
                 <p className="text-3xl font-bold text-success">{stats.inStockProducts}</p>
               </div>
               <div className="text-4xl">✅</div>
@@ -102,7 +102,7 @@ export function AdminDashboardPage() {
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">Low Stock</p>
+                <p className="text-text-secondary text-sm mb-1">Sắp hết</p>
                 <p className="text-3xl font-bold text-warning">{stats.lowStockProducts}</p>
               </div>
               <div className="text-4xl">⚠️</div>
@@ -112,7 +112,7 @@ export function AdminDashboardPage() {
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">Out of Stock</p>
+                <p className="text-text-secondary text-sm mb-1">Hết hàng</p>
                 <p className="text-3xl font-bold text-error">{stats.outOfStockProducts}</p>
               </div>
               <div className="text-4xl">❌</div>
@@ -123,12 +123,12 @@ export function AdminDashboardPage() {
 
       {/* Order Stats */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold text-text-primary mb-4">Order Statistics</h2>
+        <h2 className="text-xl font-bold text-text-primary mb-4">Thống kê Đơn hàng</h2>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">Total Orders</p>
+                <p className="text-text-secondary text-sm mb-1">Tổng đơn</p>
                 <p className="text-3xl font-bold text-accent-cyan">{stats.totalOrders}</p>
               </div>
               <div className="text-4xl">📊</div>
@@ -138,7 +138,7 @@ export function AdminDashboardPage() {
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">Pending</p>
+                <p className="text-text-secondary text-sm mb-1">Chờ xử lý</p>
                 <p className="text-3xl font-bold text-warning">{stats.pendingOrders}</p>
               </div>
               <div className="text-4xl">⏳</div>
@@ -148,7 +148,7 @@ export function AdminDashboardPage() {
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">Approved</p>
+                <p className="text-text-secondary text-sm mb-1">Đã duyệt</p>
                 <p className="text-3xl font-bold text-success">{stats.approvedOrders}</p>
               </div>
               <div className="text-4xl">✅</div>
@@ -158,7 +158,7 @@ export function AdminDashboardPage() {
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">Delivered</p>
+                <p className="text-text-secondary text-sm mb-1">Đã giao</p>
                 <p className="text-3xl font-bold text-info">{stats.deliveredOrders}</p>
               </div>
               <div className="text-4xl">📦</div>
@@ -168,7 +168,7 @@ export function AdminDashboardPage() {
           <GlassCard className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-text-secondary text-sm mb-1">Rejected</p>
+                <p className="text-text-secondary text-sm mb-1">Đã hủy</p>
                 <p className="text-3xl font-bold text-error">{stats.rejectedOrders}</p>
               </div>
               <div className="text-4xl">❌</div>
@@ -180,20 +180,20 @@ export function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Low Stock Alert */}
         <GlassCard className="p-6">
-          <h2 className="text-xl font-bold text-text-primary mb-4">⚠️ Low Stock Alert</h2>
+          <h2 className="text-xl font-bold text-text-primary mb-4">⚠️ Cảnh báo Sắp hết hàng</h2>
           {lowStockProducts.length === 0 ? (
-            <p className="text-text-secondary text-center py-8">All products are well stocked!</p>
+            <p className="text-text-secondary text-center py-8">Tất cả sản phẩm đều đủ hàng!</p>
           ) : (
             <div className="space-y-3">
               {lowStockProducts.map((product: Product) => (
                 <div key={product.id} className="flex items-center justify-between p-3 glass-dark rounded-lg">
                   <div className="flex-1">
                     <p className="text-text-primary font-medium">{product.name}</p>
-                    <p className="text-text-secondary text-sm">{product.category.name}</p>
+                    <p className="text-text-secondary text-sm">{product.category?.name || 'No category'}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-warning font-bold">{product.stockQuantity} {product.unit}</p>
-                    <p className="text-text-secondary text-xs">remaining</p>
+                    <p className="text-text-secondary text-xs">còn lại</p>
                   </div>
                 </div>
               ))}
@@ -203,26 +203,28 @@ export function AdminDashboardPage() {
 
         {/* Recent Orders */}
         <GlassCard className="p-6">
-          <h2 className="text-xl font-bold text-text-primary mb-4">📦 Recent Orders</h2>
+          <h2 className="text-xl font-bold text-text-primary mb-4">📦 Đơn hàng gần đây</h2>
           {recentOrders.length === 0 ? (
-            <p className="text-text-secondary text-center py-8">No orders yet</p>
+            <p className="text-text-secondary text-center py-8">Chưa có đơn hàng nào</p>
           ) : (
             <div className="space-y-3">
               {recentOrders.map((order: Order) => (
                 <div key={order.id} className="flex items-center justify-between p-3 glass-dark rounded-lg">
                   <div className="flex-1">
-                    <p className="text-text-primary font-medium">Order #{order.id}</p>
-                    <p className="text-text-secondary text-sm">{order.user.fullName}</p>
+                    <p className="text-text-primary font-medium">Đơn #{order.id}</p>
+                    <p className="text-text-secondary text-sm">{order.user?.fullName || 'Unknown'}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-accent-teal font-bold">{formatCurrency(order.totalPrice)}</p>
-                    <p className={`text-xs ${
-                      order.status === 'pending' ? 'text-warning' :
-                      order.status === 'approved' ? 'text-success' :
-                      order.status === 'delivered' ? 'text-info' :
-                      'text-error'
-                    }`}>
-                      {order.status}
+                    <p className="text-accent-teal font-bold">{formatCurrency(order.totalAmount)}</p>
+                    <p className={`text-xs ${order.status === 'pending' ? 'text-warning' :
+                        order.status === 'approved' ? 'text-success' :
+                          order.status === 'delivered' ? 'text-info' :
+                            'text-error'
+                      }`}>
+                      {order.status === 'pending' ? 'Chờ xử lý' :
+                        order.status === 'approved' ? 'Đã duyệt' :
+                          order.status === 'delivered' ? 'Đã giao' :
+                            order.status === 'rejected' ? 'Đã từ chối' : order.status}
                     </p>
                   </div>
                 </div>

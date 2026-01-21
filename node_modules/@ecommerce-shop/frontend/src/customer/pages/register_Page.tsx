@@ -7,9 +7,9 @@ import { GlassCard, GlassButton, GlassInput } from '@shared/components';
 import { useAuthStore } from '@shared/store';
 
 const registerSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  fullName: z.string().min(2, 'Full name is required'),
+  email: z.string().email('Email không hợp lệ'),
+  password: z.string().min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+  fullName: z.string().min(2, 'Vui lòng nhập họ tên đầy đủ'),
   phone: z.string().optional(),
 });
 
@@ -47,15 +47,15 @@ export function RegisterPage() {
     <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4 py-12">
       <GlassCard className="w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold gradient-text mb-2">Create Account</h1>
-          <p className="text-text-secondary">Join our cooking community</p>
+          <h1 className="text-3xl font-bold gradient-text mb-2">Đăng ký tài khoản</h1>
+          <p className="text-text-secondary">Tham gia cùng cộng đồng yêu bếp</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <GlassInput
-            label="Full Name"
+            label="Họ và tên"
             type="text"
-            placeholder="John Doe"
+            placeholder="Nguyễn Văn A"
             fullWidth
             error={errors.fullName?.message}
             {...register('fullName')}
@@ -64,14 +64,14 @@ export function RegisterPage() {
           <GlassInput
             label="Email"
             type="email"
-            placeholder="your@email.com"
+            placeholder="email@cuaban.com"
             fullWidth
             error={errors.email?.message}
             {...register('email')}
           />
 
           <GlassInput
-            label="Password"
+            label="Mật khẩu"
             type="password"
             placeholder="••••••••"
             fullWidth
@@ -80,7 +80,7 @@ export function RegisterPage() {
           />
 
           <GlassInput
-            label="Phone (Optional)"
+            label="Số điện thoại (Tùy chọn)"
             type="tel"
             placeholder="0901234567"
             fullWidth
@@ -101,15 +101,15 @@ export function RegisterPage() {
             fullWidth
             loading={isLoading}
           >
-            Register
+            Đăng ký
           </GlassButton>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-text-secondary text-sm">
-            Already have an account?{' '}
+            Đã có tài khoản?{' '}
             <Link to="/login" className="text-primary-500 hover:text-primary-600">
-              Login here
+              Đăng nhập ngay
             </Link>
           </p>
         </div>

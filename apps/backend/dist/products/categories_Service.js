@@ -21,8 +21,26 @@ let CategoriesService = class CategoriesService {
     constructor(categoriesRepository) {
         this.categoriesRepository = categoriesRepository;
     }
+    generateSlug(name) {
+        return name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-');
+    }
     async create(createCategoryDto) {
-        const category = this.categoriesRepository.create(createCategoryDto);
+        const slug = createCategoryDto.slug || this.generateSlug(createCategoryDto.name);
+        const existing = await this.categoriesRepository.findOne({ where: { slug } });
+        if (existing) {
+            throw new common_1.ConflictException(`Category with slug "${slug}" already exists`);
+        }
+        const category = this.categoriesRepository.create({
+            ...createCategoryDto,
+            slug
+        });
         return await this.categoriesRepository.save(category);
     }
     async findAll() {
@@ -43,6 +61,14 @@ let CategoriesService = class CategoriesService {
     }
     async update(id, updateCategoryDto) {
         const category = await this.findOne(id);
+        if (updateCategoryDto.name && !updateCategoryDto.slug) {
+        }
+        if (updateCategoryDto.slug && updateCategoryDto.slug !== category.slug) {
+            const existing = await this.categoriesRepository.findOne({ where: { slug: updateCategoryDto.slug } });
+            if (existing) {
+                throw new common_1.ConflictException(`Category with slug "${updateCategoryDto.slug}" already exists`);
+            }
+        }
         Object.assign(category, updateCategoryDto);
         return await this.categoriesRepository.save(category);
     }
