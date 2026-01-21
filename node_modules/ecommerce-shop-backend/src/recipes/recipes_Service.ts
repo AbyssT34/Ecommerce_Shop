@@ -122,7 +122,7 @@ export class RecipesService {
       return b.totalAvailability - a.totalAvailability;
     });
 
-    return availableRecipes.slice(0, 12); // Return top 12 suggestions availableRecipes;
+    return availableRecipes; // Return all calculated recipes
   }
 
   /**

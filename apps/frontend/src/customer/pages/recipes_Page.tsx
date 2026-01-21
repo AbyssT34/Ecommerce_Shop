@@ -8,20 +8,18 @@ import { useCartStore } from '@shared/store';
 
 export function RecipesPage() {
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeWithAvailability | null>(null);
+  const [filter, setFilter] = useState<'all' | 'available' | 'missing'>('all');
   const { addItem } = useCartStore();
 
   const { data: recipes = [], isLoading } = useQuery({
-    queryKey: ['recipes', 'all'],
-    queryFn: async () => {
-      // Get all recipes and transform to RecipeWithAvailability format
-      const allRecipes = await recipesApi.getAll();
-      return allRecipes.map((recipe: any) => ({
-        ...recipe,
-        isAvailable: true, // Show all recipes
-        estimatedCost: 0,
-        productSuggestions: [],
-      }));
-    },
+    queryKey: ['recipes', 'available'], // Changed key
+    queryFn: () => recipesApi.getAvailable(), // Use availability endpoint
+  });
+
+  const filteredRecipes = recipes.filter(recipe => {
+    if (filter === 'available') return recipe.isFullyAvailable;
+    if (filter === 'missing') return !recipe.isFullyAvailable;
+    return true;
   });
 
   const handleSelectRecipe = async (recipe: RecipeWithAvailability) => {
@@ -63,6 +61,28 @@ export function RecipesPage() {
         <p className="text-text-secondary text-lg">
           Gợi ý món ăn thông minh dựa trên nguyên liệu có sẵn
         </p>
+
+        {/* Filters */}
+        <div className="flex justify-center gap-4 mt-8">
+          <GlassButton
+            variant={filter === 'all' ? 'primary' : 'secondary'}
+            onClick={() => setFilter('all')}
+          >
+            Tất cả
+          </GlassButton>
+          <GlassButton
+            variant={filter === 'available' ? 'success' : 'secondary'}
+            onClick={() => setFilter('available')}
+          >
+            Có thể nấu ngay
+          </GlassButton>
+          <GlassButton
+            variant={filter === 'missing' ? 'danger' : 'secondary'}
+            onClick={() => setFilter('missing')}
+          >
+            Thiếu nguyên liệu
+          </GlassButton>
+        </div>
       </div>
 
       {/* Loading State */}
@@ -71,18 +91,18 @@ export function RecipesPage() {
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent-teal border-t-transparent"></div>
           <p className="text-text-secondary mt-4">Đang tải gợi ý từ AI...</p>
         </div>
-      ) : recipes.length === 0 ? (
+      ) : filteredRecipes.length === 0 ? (
         <GlassCard className="p-12 text-center">
-          <p className="text-text-secondary text-lg">Hiện không có công thức nào phù hợp</p>
+          <p className="text-text-secondary text-lg">Không tìm thấy công thức nào phù hợp</p>
         </GlassCard>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Recipes List */}
           <div className="space-y-4">
             <h2 className="text-2xl font-semibold text-text-primary mb-4">
-              Công thức có sẵn ({recipes.length})
+              Danh sách món ăn ({filteredRecipes.length})
             </h2>
-            {recipes.map((recipe: RecipeWithAvailability) => (
+            {filteredRecipes.map((recipe: RecipeWithAvailability) => (
               <GlassCard
                 key={recipe.id}
                 className={`p-6 cursor-pointer transition-all ${selectedRecipe?.id === recipe.id ? 'ring-2 ring-accent-teal' : ''
@@ -97,11 +117,23 @@ export function RecipesPage() {
                       <h3 className="text-xl font-semibold text-text-primary">
                         {recipe.name}
                       </h3>
-                      {recipe.isAvailable && (
-                        <div className="flex-shrink-0 ml-2">
+                      <div className="flex flex-col items-end ml-2 filter-none">
+                        {recipe.isFullyAvailable ? (
                           <Badge variant="success">Có thể nấu ngay</Badge>
-                        </div>
-                      )}
+                        ) : (
+                          <>
+                            <Badge variant="error" className="bg-red-500/20 text-red-400 border-red-500/50 mb-1">
+                              Thiếu {recipe.missingIngredientsCount} NL
+                            </Badge>
+                            <span className="text-[10px] text-red-400 text-right max-w-[120px] leading-tight">
+                              {recipe.ingredients
+                                .filter((i: any) => !i.isAvailable)
+                                .map((i: any) => i.ingredient_name)
+                                .join(', ')}
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     <p className="text-text-secondary text-sm mb-4 line-clamp-2">
@@ -181,7 +213,7 @@ export function RecipesPage() {
                           {suggestion.isAvailable ? (
                             <Badge variant="success" className="ml-2 flex-shrink-0">✓</Badge>
                           ) : (
-                            <Badge variant="error" className="ml-2 flex-shrink-0">✗</Badge>
+                            <Badge variant="error" className="ml-2 flex-shrink-0">Hết hàng</Badge>
                           )}
                         </div>
                       ))}

@@ -96,7 +96,7 @@ let RecipesService = class RecipesService {
             }
             return b.totalAvailability - a.totalAvailability;
         });
-        return availableRecipes.slice(0, 12);
+        return availableRecipes;
     }
     async checkRecipeAvailability(ingredientIds) {
         for (const ingredientId of ingredientIds) {
